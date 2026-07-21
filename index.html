@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#16201B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Cubicador Forestal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #16201B;
+    --panel: #1F2B24;
+    --panel-2: #253327;
+    --line: #37473C;
+    --ink: #ECE6D6;
+    --ink-muted: #9FAE9D;
+    --amber: #C9A66B;
+    --amber-strong: #DDBB80;
+    --pine: #82A87D;
+    --danger: #C97B6B;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(130,168,125,0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(201,166,107,0.06), transparent 45%);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap{
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 48px;
+  }
+  header{
+    padding: 10px 4px 22px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pine);
+    margin: 0 0 6px;
+  }
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1.05;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  h1 .version{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pine);
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .sub{
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  section.card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .card-title{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 0 0 12px;
+  }
+
+  /* Species selector */
+  .species-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .species-tag{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+    position: relative;
+  }
+  .species-tag input{ position:absolute; opacity:0; }
+  .species-tag .name{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 16.5px;
+  }
+  .species-tag .marker{
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink-muted);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .species-tag .marker::after{
+    content:'';
+    position:absolute; inset: 3px;
+    border-radius:50%;
+    background: var(--amber);
+    transform: scale(0);
+    transition: transform .12s ease;
+  }
+  .species-tag.active{
+    border-color: var(--amber);
+    background: #2A3729;
+  }
+  .species-tag.active .marker{ border-color: var(--amber); }
+  .species-tag.active .marker::after{ transform: scale(1); }
+
+  /* Inputs with steppers */
+  .field{ margin-bottom: 14px; }
+  .field:last-child{ margin-bottom: 0; }
+  .field label{
+    display:block;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    margin-bottom: 7px;
+  }
+  .stepper{
+    display:flex;
+    align-items:center;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow:hidden;
+  }
+  .stepper button{
+    width: 46px; height: 50px;
+    background: transparent;
+    border: none;
+    color: var(--amber-strong);
+    font-size: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+  }
+  .stepper button:active{ background: rgba(201,166,107,0.12); }
+  .stepper input{
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 19px;
+    font-weight: 500;
+    height: 50px;
+    padding: 0 4px;
+  }
+  .stepper input:focus{ outline: none; background: rgba(201,166,107,0.06); }
+  .stepper .unit{
+    width: 40px;
+    text-align:center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+
+  .calc-btn{
+    width: 100%;
+    padding: 16px;
+    margin-top: 4px;
+    background: var(--amber);
+    color: #1B2420;
+    border: none;
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+  .calc-btn:active{ transform: scale(0.98); background: var(--amber-strong); }
+
+  .error-msg{
+    display:none;
+    font-size: 12.5px;
+    color: var(--danger);
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .error-msg.show{ display:block; }
+
+  /* Result */
+  .result{
+    display:none;
+    text-align:center;
+    padding: 22px 16px 18px;
+  }
+  .result.show{ display:block; }
+  .ring-wrap{
+    width: 92px; height: 92px;
+    margin: 0 auto 12px;
+    opacity: 0;
+    transform: scale(0.75);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .ring-wrap.grown{ opacity: 1; transform: scale(1); }
+  .result-species{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin: 0 0 2px;
+  }
+  .result-value{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 42px;
+    color: var(--amber-strong);
+    line-height: 1.1;
+    margin: 2px 0 0;
+  }
+  .result-value .unit{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-left: 6px;
+  }
+  .result-add{
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid var(--pine);
+    color: var(--pine);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .result-add:active{ background: rgba(130,168,125,0.1); }
+  .result-add.added{ opacity: 0.5; pointer-events: none; }
+
+  /* Log / tally */
+  .log-header{
+    display:flex;
+    align-items:baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .log-total{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--pine);
+  }
+  .log-total b{ color: var(--amber-strong); font-size: 15px; }
+  .subtotals{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .subtotal-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--pine);
+    border-radius: 8px;
+  }
+  .subtotal-row .st-name{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .subtotal-row .st-count{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-left: 6px;
+  }
+  .subtotal-row .st-value{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--amber-strong);
+    white-space: nowrap;
+  }
+  .subtotal-row .st-value .u{
+    font-size: 10.5px;
+    font-weight: 400;
+    color: var(--ink-muted);
+    margin-left: 3px;
+  }
+
+  table.log-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  table.log-table th{
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 0 6px 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table.log-table td{
+    padding: 9px 6px 9px 0;
+    border-bottom: 1px solid rgba(55,71,60,0.6);
+    color: var(--ink);
+  }
+  table.log-table td.num{ font-family: 'IBM Plex Mono', monospace; text-align:right; }
+  table.log-table td.date-cell{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-muted); white-space: nowrap; }
+  table.log-table td.date-cell .time{ color: var(--ink-muted); opacity: 0.75; }
+  table.log-table tr:last-child td{ border-bottom: none; }
+  .log-empty{
+    color: var(--ink-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 18px 0;
+    font-style: italic;
+  }
+  .export-btn{
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--pine);
+    color: #14201A;
+    border: none;
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14.5px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+  .export-btn:active{ transform: scale(0.98); background: #93B98D; }
+  .export-btn:disabled{ opacity: 0.4; pointer-events: none; }
+
+  .log-actions{
+    display:flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .log-actions button{
+    flex:1;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink-muted);
+    font-size: 12.5px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+  }
+  .log-actions button:active{ background: var(--line); }
+  .log-actions button.danger{ color: var(--danger); }
+
+  footer{
+    margin-top: 22px;
+    padding: 0 4px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+  footer .credit{
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: var(--ink-muted);
+  }
+  .toast{
+    position: fixed;
+    left: 50%; bottom: 24px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--amber-strong);
+    color: #1B2420;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Dendrometría de campo</p>
+    <h1>Cubicador Forestal <span class="version">v1.0</span></h1>
+    <p class="sub">Diámetro y altura → volumen total del árbol (m³ VTA), por especie.</p>
+  </header>
+
+  <section class="card">
+    <p class="card-title">Especie</p>
+    <div class="species-grid" id="speciesGrid">
+      <label class="species-tag active" data-key="abies">
+        <input type="radio" name="species" value="abies" checked>
+        <span class="name">Abies religiosa</span>
+        <span class="marker"></span>
+      </label>
+      <label class="species-tag" data-key="pmont">
+        <input type="radio" name="species" value="pmont">
+        <span class="name">Pinus montezumae</span>
+        <span class="marker"></span>
+      </label>
+      <label class="species-tag" data-key="pteo">
+        <input type="radio" name="species" value="pteo">
+        <span class="name">Pinus teocote</span>
+        <span class="marker"></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <p class="card-title">Mediciones</p>
+    <div class="field">
+      <label for="diamInput">Diámetro normal (DAP)</label>
+      <div class="stepper">
+        <button type="button" data-target="diamInput" data-step="-1">−</button>
+        <input id="diamInput" type="number" inputmode="decimal" value="25" min="0" step="0.1">
+        <span class="unit">cm</span>
+        <button type="button" data-target="diamInput" data-step="1">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="altInput">Altura total</label>
+      <div class="stepper">
+        <button type="button" data-target="altInput" data-step="-0.5">−</button>
+        <input id="altInput" type="number" inputmode="decimal" value="12" min="0" step="0.1">
+        <span class="unit">m</span>
+        <button type="button" data-target="altInput" data-step="0.5">+</button>
+      </div>
+    </div>
+    <button class="calc-btn" id="calcBtn">Calcular volumen</button>
+    <p class="error-msg" id="errorMsg">El diámetro y la altura deben ser mayores que cero.</p>
+  </section>
+
+  <section class="card">
+    <div class="result" id="resultBlock">
+      <div class="ring-wrap" id="ringWrap">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#37473C" stroke-width="2"/>
+          <circle cx="50" cy="50" r="36" fill="none" stroke="#4A5C4F" stroke-width="2"/>
+          <circle cx="50" cy="50" r="26" fill="none" stroke="#82A87D" stroke-width="2"/>
+          <circle cx="50" cy="50" r="16" fill="none" stroke="#C9A66B" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="6" fill="#DDBB80"/>
+        </svg>
+      </div>
+      <p class="result-species" id="resultSpecies">Abies religiosa</p>
+      <p class="result-value" id="resultValue">0.0000<span class="unit">m³</span></p>
+      <button class="result-add" id="addBtn">+ Agregar al registro</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="log-header">
+      <p class="card-title" style="margin:0;">Registro de campo</p>
+      <p class="log-total">Total: <b id="logTotal">0.0000</b> m³</p>
+    </div>
+    <div id="speciesSubtotals"></div>
+    <div id="logBody">
+      <p class="log-empty">Aún no hay árboles registrados.</p>
+    </div>
+    <button class="export-btn" id="exportBtn">⬇ Descargar Excel</button>
+    <div class="log-actions">
+      <button id="copyBtn">Copiar registro</button>
+      <button id="clearBtn" class="danger">Vaciar</button>
+    </div>
+  </section>
+
+  <footer>
+    DAP en cm · altura en m · volumen total árbol (VTA) en m³, según las ecuaciones de volumen proporcionadas para cada especie. El registro se guarda solo en este celular.
+    <p class="credit">Aplicación creada por el Ing. José Antonio Cortés Ojeda.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Parámetros de las ecuaciones de volumen (V = a * D^b * H^c + d * D^2)
+// No modificar: si estos valores cambian, la app detecta la alteración y se bloquea.
+const FORMULA_PARAMS = {
+  abies: {a:0.000083, b:1.965448, c:0.764849, d:0.00002},
+  pmont: {a:0.000047, b:1.905708, c:1.07229, d:0.000051},
+  pteo:  {a:0.000058, b:2.010371, c:0.861837, d:0.000043}
+};
+const EXPECTED_HASH = 'b9a9f41dd08c8cb5c300efc655b95b2eda7478347f66f8ea882cdc371d6aefbe';
+
+const SPECIES = {
+  abies:  { name: 'Abies religiosa',    calc: (D,H) => FORMULA_PARAMS.abies.a*Math.pow(D,FORMULA_PARAMS.abies.b)*Math.pow(H,FORMULA_PARAMS.abies.c) + FORMULA_PARAMS.abies.d*Math.pow(D,2) },
+  pmont:  { name: 'Pinus montezumae',   calc: (D,H) => FORMULA_PARAMS.pmont.a*Math.pow(D,FORMULA_PARAMS.pmont.b)*Math.pow(H,FORMULA_PARAMS.pmont.c) + FORMULA_PARAMS.pmont.d*Math.pow(D,2) },
+  pteo:   { name: 'Pinus teocote',      calc: (D,H) => FORMULA_PARAMS.pteo.a*Math.pow(D,FORMULA_PARAMS.pteo.b)*Math.pow(H,FORMULA_PARAMS.pteo.c) + FORMULA_PARAMS.pteo.d*Math.pow(D,2) }
+};
+
+async function checkIntegrity(){
+  try{
+    if(!window.crypto || !window.crypto.subtle) return; // sin soporte: no bloquear
+    const data = new TextEncoder().encode(JSON.stringify(FORMULA_PARAMS));
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    const hex = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+    if(hex !== EXPECTED_HASH){
+      document.body.innerHTML = `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;text-align:center;background:#16201B;color:#ECE6D6;font-family:sans-serif;">
+        <div>
+          <p style="font-size:36px;margin:0 0 12px;">⚠️</p>
+          <p style="font-size:17px;font-weight:600;margin:0 0 8px;">Esta aplicación fue modificada</p>
+          <p style="font-size:13.5px;color:#9FAE9D;line-height:1.5;">Las fórmulas de cálculo no coinciden con la versión original, por lo que no es posible garantizar resultados correctos. Solicita una copia sin modificar.</p>
+        </div>
+      </div>`;
+    }
+  }catch(e){ /* si falla la verificación, no se bloquea la app */ }
+}
+checkIntegrity();
+
+const diamInput = document.getElementById('diamInput');
+const altInput = document.getElementById('altInput');
+const calcBtn = document.getElementById('calcBtn');
+const errorMsg = document.getElementById('errorMsg');
+const resultBlock = document.getElementById('resultBlock');
+const ringWrap = document.getElementById('ringWrap');
+const resultSpecies = document.getElementById('resultSpecies');
+const resultValue = document.getElementById('resultValue');
+const addBtn = document.getElementById('addBtn');
+const logBody = document.getElementById('logBody');
+const logTotal = document.getElementById('logTotal');
+const speciesSubtotals = document.getElementById('speciesSubtotals');
+const toast = document.getElementById('toast');
+
+let currentSpeciesKey = 'abies';
+let lastResult = null;
+
+// Species selector
+document.querySelectorAll('.species-tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    document.querySelectorAll('.species-tag').forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+    currentSpeciesKey = tag.dataset.key;
+  });
+});
+
+// Steppers
+document.querySelectorAll('.stepper button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    const step = parseFloat(btn.dataset.step);
+    let val = parseFloat(target.value) || 0;
+    val = Math.max(0, +(val + step).toFixed(2));
+    target.value = val;
+  });
+});
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function calcVolume(){
+  const D = parseFloat(diamInput.value);
+  const H = parseFloat(altInput.value);
+
+  if(!D || !H || D <= 0 || H <= 0){
+    errorMsg.classList.add('show');
+    resultBlock.classList.remove('show');
+    return;
+  }
+  errorMsg.classList.remove('show');
+
+  const species = SPECIES[currentSpeciesKey];
+  const V = species.calc(D, H);
+
+  resultSpecies.textContent = species.name;
+  resultValue.innerHTML = V.toFixed(4) + '<span class="unit">m³</span>';
+  resultBlock.classList.add('show');
+  addBtn.classList.remove('added');
+  addBtn.textContent = '+ Agregar al registro';
+
+  ringWrap.classList.remove('grown');
+  void ringWrap.offsetWidth; // restart animation
+  requestAnimationFrame(() => ringWrap.classList.add('grown'));
+
+  lastResult = { species: species.name, D, H, V };
+}
+
+calcBtn.addEventListener('click', calcVolume);
+
+// Log / tally (persisted locally on the phone)
+function loadLog(){
+  try{
+    return JSON.parse(localStorage.getItem('cubicador_log') || '[]');
+  }catch(e){ return []; }
+}
+function saveLog(log){
+  localStorage.setItem('cubicador_log', JSON.stringify(log));
+}
+function renderLog(){
+  const log = loadLog();
+  if(log.length === 0){
+    speciesSubtotals.innerHTML = '';
+    logBody.innerHTML = '<p class="log-empty">Aún no hay árboles registrados.</p>';
+    logTotal.textContent = '0.0000';
+    return;
+  }
+  let total = 0;
+  let rows = '';
+  const bySpecies = {}; // preserves order of first appearance
+
+  log.forEach((entry, i) => {
+    total += entry.V;
+    rows += `<tr>
+      <td>${i+1}</td>
+      <td class="date-cell">${entry.date ? entry.date + (entry.time ? '<br><span class="time">'+entry.time+'</span>' : '') : '—'}</td>
+      <td><em>${entry.species}</em></td>
+      <td class="num">${entry.D}</td>
+      <td class="num">${entry.H}</td>
+      <td class="num">${entry.V.toFixed(4)}</td>
+    </tr>`;
+
+    if(!bySpecies[entry.species]) bySpecies[entry.species] = { count: 0, sum: 0 };
+    bySpecies[entry.species].count += 1;
+    bySpecies[entry.species].sum += entry.V;
+  });
+
+  speciesSubtotals.innerHTML = `<div class="subtotals">${
+    Object.entries(bySpecies).map(([name, s]) => `
+      <div class="subtotal-row">
+        <span class="st-name">${name}<span class="st-count">· ${s.count} ${s.count === 1 ? 'árbol' : 'árboles'}</span></span>
+        <span class="st-value">${s.sum.toFixed(4)}<span class="u">m³</span></span>
+      </div>`).join('')
+  }</div>`;
+
+  logBody.innerHTML = `<table class="log-table">
+    <thead><tr><th>#</th><th>Fecha</th><th>Especie</th><th>D (cm)</th><th>H (m)</th><th>V (m³)</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  logTotal.textContent = total.toFixed(4);
+}
+
+addBtn.addEventListener('click', () => {
+  if(!lastResult || addBtn.classList.contains('added')) return;
+  const log = loadLog();
+  const now = new Date();
+  log.push({
+    ...lastResult,
+    date: now.toLocaleDateString('es-MX'),
+    time: now.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'})
+  });
+  saveLog(log);
+  renderLog();
+  addBtn.classList.add('added');
+  addBtn.textContent = '✓ Agregado';
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if(confirm('¿Vaciar todo el registro de campo? Esta acción no se puede deshacer.')){
+    localStorage.removeItem('cubicador_log');
+    renderLog();
+  }
+});
+
+function escapeXml(str){
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const log = loadLog();
+  if(log.length === 0){ showToast('El registro está vacío'); return; }
+
+  let total = 0;
+  let rowsXml = '';
+  const bySpeciesExport = {};
+  log.forEach((entry, i) => {
+    total += entry.V;
+    const fechaHora = entry.date ? (entry.date + (entry.time ? ' ' + entry.time : '')) : '';
+    rowsXml += `
+      <Row>
+        <Cell><Data ss:Type="Number">${i+1}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(fechaHora)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(entry.species)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.D}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.H}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.V.toFixed(6)}</Data></Cell>
+      </Row>`;
+    if(!bySpeciesExport[entry.species]) bySpeciesExport[entry.species] = { count: 0, sum: 0 };
+    bySpeciesExport[entry.species].count += 1;
+    bySpeciesExport[entry.species].sum += entry.V;
+  });
+
+  let subtotalRowsXml = '';
+  Object.entries(bySpeciesExport).forEach(([name, s]) => {
+    subtotalRowsXml += `
+      <Row>
+        <Cell><Data ss:Type="String">${escapeXml(name)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${s.count}</Data></Cell>
+        <Cell><Data ss:Type="Number">${s.sum.toFixed(6)}</Data></Cell>
+      </Row>`;
+  });
+
+  const dateStr = new Date().toLocaleDateString('es-MX');
+
+  const xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#2B4A38" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="TotalLabel"><Font ss:Bold="1"/></Style>
+  <Style ss:ID="TotalValue"><Font ss:Bold="1"/><NumberFormat ss:Format="0.0000"/></Style>
+  <Style ss:ID="NumFmt"><NumberFormat ss:Format="0.0000"/></Style>
+ </Styles>
+ <Worksheet ss:Name="Registro de campo">
+  <Table>
+   <Column ss:Width="30"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="130"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="90"/>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">#</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Especie</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Diametro (cm)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Altura (m)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen (m3)</Data></Cell>
+   </Row>${rowsXml}
+   <Row>
+    <Cell></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
+    <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total</Data></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
+   </Row>
+   <Row></Row>
+   <Row>
+    <Cell><Data ss:Type="String">Exportado: ${dateStr}</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+ <Worksheet ss:Name="Subtotales por especie">
+  <Table>
+   <Column ss:Width="150"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="90"/>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Especie</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Arboles</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen acumulado (m3)</Data></Cell>
+   </Row>${subtotalRowsXml}
+   <Row></Row>
+   <Row>
+    <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total general</Data></Cell>
+    <Cell></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+  const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fileDate = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `registro_cubicacion_${fileDate}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Excel descargado');
+});
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const log = loadLog();
+  if(log.length === 0){ showToast('El registro está vacío'); return; }
+  let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\n';
+  let total = 0;
+  const bySpeciesCopy = {};
+  log.forEach(e => {
+    total += e.V;
+    const fechaHora = e.date ? (e.date + (e.time ? ' ' + e.time : '')) : '';
+    text += `${fechaHora}\t${e.species}\t${e.D}\t${e.H}\t${e.V.toFixed(4)}\n`;
+    if(!bySpeciesCopy[e.species]) bySpeciesCopy[e.species] = { count: 0, sum: 0 };
+    bySpeciesCopy[e.species].count += 1;
+    bySpeciesCopy[e.species].sum += e.V;
+  });
+  text += `\nTotal\t\t\t\t${total.toFixed(4)}`;
+
+  text += '\n\nSubtotales por especie\nEspecie\tArboles\tV acumulado (m³)\n';
+  Object.entries(bySpeciesCopy).forEach(([name, s]) => {
+    text += `${name}\t${s.count}\t${s.sum.toFixed(4)}\n`;
+  });
+
+  const finish = () => showToast('Registro copiado');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(finish).catch(() => {
+      fallbackCopy(text); finish();
+    });
+  } else {
+    fallbackCopy(text); finish();
+  }
+});
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+renderLog();
+calcVolume();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
