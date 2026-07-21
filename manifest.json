@@ -1,7 +1,7 @@
 {
   "name": "Cubicador Forestal",
   "short_name": "Cubicador",
-  "description": "Calcula el volumen total de árboles (VTA) por especie a partir de diámetro y altura, con registro de campo georreferenciado.",
+  "description": "Calcula el volumen total de árboles (VTA) por especie a partir de diámetro y altura, con registro de campo por fecha.",
   "start_url": "./index.html",
   "id": "./index.html",
   "scope": "./",
@@ -10,6 +10,18 @@
   "background_color": "#16201B",
   "theme_color": "#16201B",
   "lang": "es-MX",
+  "categories": ["utilities", "productivity", "education"],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Calcular volumen",
+      "short_name": "Calcular",
+      "description": "Abrir el cubicador para calcular un nuevo árbol",
+      "url": "./index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "icons/icon-192.png",
