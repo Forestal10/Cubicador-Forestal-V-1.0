@@ -97,10 +97,51 @@
   }
 
   /* Species selector */
+  .species-select-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    transition: border-color .15s ease;
+  }
+  .species-select-btn.open{ border-color: var(--amber); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .species-select-btn .name{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 16.5px;
+    color: var(--ink);
+  }
+  .species-select-btn .chevron{
+    color: var(--amber);
+    font-size: 14px;
+    transition: transform .2s ease;
+  }
+  .species-select-btn.open .chevron{ transform: rotate(180deg); }
+
+  .species-dropdown{
+    max-height: 0;
+    overflow: hidden;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: max-height .25s ease;
+  }
+  .species-dropdown.open{ max-height: 400px; overflow-y: auto; }
   .species-grid{
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;
+    padding: 8px;
   }
   .species-tag{
     display: flex;
@@ -108,7 +149,7 @@
     justify-content: space-between;
     gap: 10px;
     padding: 13px 14px;
-    background: var(--panel-2);
+    background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 10px;
     cursor: pointer;
@@ -258,6 +299,19 @@
     color: var(--ink-muted);
     margin-left: 6px;
   }
+  .result-basal{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--pine);
+    margin: 6px 0 0;
+  }
+  .result-basal .unit{
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-muted);
+    margin-left: 4px;
+  }
   .result-add{
     margin-top: 16px;
     background: transparent;
@@ -329,6 +383,12 @@
     margin-left: 3px;
   }
 
+  .log-scroll{
+    max-height: 340px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
   table.log-table{
     width: 100%;
     border-collapse: collapse;
@@ -344,6 +404,10 @@
     color: var(--ink-muted);
     padding: 0 6px 8px 0;
     border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    z-index: 1;
   }
   table.log-table td{
     padding: 9px 6px 9px 0;
@@ -396,6 +460,21 @@
   }
   .log-actions button:active{ background: var(--line); }
   .log-actions button.danger{ color: var(--danger); }
+  .restore-link{
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .restore-link:active{ color: var(--pine); }
 
   footer{
     margin-top: 22px;
@@ -446,22 +525,43 @@
 
   <section class="card">
     <p class="card-title">Especie</p>
-    <div class="species-grid" id="speciesGrid">
-      <label class="species-tag active" data-key="abies">
-        <input type="radio" name="species" value="abies" checked>
-        <span class="name">Abies religiosa</span>
-        <span class="marker"></span>
-      </label>
-      <label class="species-tag" data-key="pmont">
-        <input type="radio" name="species" value="pmont">
-        <span class="name">Pinus montezumae</span>
-        <span class="marker"></span>
-      </label>
-      <label class="species-tag" data-key="pteo">
-        <input type="radio" name="species" value="pteo">
-        <span class="name">Pinus teocote</span>
-        <span class="marker"></span>
-      </label>
+    <button type="button" class="species-select-btn" id="speciesSelectBtn">
+      <span class="name" id="speciesSelectedName">Abies religiosa</span>
+      <span class="chevron" id="speciesChevron">▾</span>
+    </button>
+    <div class="species-dropdown" id="speciesDropdown">
+      <div class="species-grid" id="speciesGrid">
+        <label class="species-tag active" data-key="abies">
+          <input type="radio" name="species" value="abies" checked>
+          <span class="name">Abies religiosa</span>
+          <span class="marker"></span>
+        </label>
+        <label class="species-tag" data-key="pmont">
+          <input type="radio" name="species" value="pmont">
+          <span class="name">Pinus montezumae</span>
+          <span class="marker"></span>
+        </label>
+        <label class="species-tag" data-key="pteo">
+          <input type="radio" name="species" value="pteo">
+          <span class="name">Pinus teocote</span>
+          <span class="marker"></span>
+        </label>
+        <label class="species-tag" data-key="alnus">
+          <input type="radio" name="species" value="alnus">
+          <span class="name">Alnus acuminata</span>
+          <span class="marker"></span>
+        </label>
+        <label class="species-tag" data-key="ppatula">
+          <input type="radio" name="species" value="ppatula">
+          <span class="name">Pinus patula</span>
+          <span class="marker"></span>
+        </label>
+        <label class="species-tag" data-key="payac">
+          <input type="radio" name="species" value="payac">
+          <span class="name">Pinus ayacahuite</span>
+          <span class="marker"></span>
+        </label>
+      </div>
     </div>
   </section>
 
@@ -502,6 +602,7 @@
       </div>
       <p class="result-species" id="resultSpecies">Abies religiosa</p>
       <p class="result-value" id="resultValue">0.0000<span class="unit">m³</span></p>
+      <p class="result-basal" id="resultBasal">AB: 0.0000<span class="unit">m²</span></p>
       <button class="result-add" id="addBtn">+ Agregar al registro</button>
     </div>
   </section>
@@ -509,7 +610,7 @@
   <section class="card">
     <div class="log-header">
       <p class="card-title" style="margin:0;">Registro de campo</p>
-      <p class="log-total">Total: <b id="logTotal">0.0000</b> m³</p>
+      <p class="log-total">Total: <b id="logTotal">0.0000</b> m³ · <b id="logTotalBasal">0.0000</b> m²</p>
     </div>
     <div id="speciesSubtotals"></div>
     <div id="logBody">
@@ -520,6 +621,7 @@
       <button id="copyBtn">Copiar registro</button>
       <button id="clearBtn" class="danger">Vaciar</button>
     </div>
+    <button class="restore-link" id="restoreBtn">↺ Restaurar respaldo</button>
   </section>
 
   <footer>
@@ -532,18 +634,30 @@
 
 <script>
 // Parámetros de las ecuaciones de volumen (V = a * D^b * H^c + d * D^2)
-// No modificar: si estos valores cambian, la app detecta la alteración y se bloquea.
+// y del área basal (AB = (D/100)^2 * k). No modificar: si estos valores
+// cambian, la app detecta la alteración y se bloquea.
 const FORMULA_PARAMS = {
   abies: {a:0.000083, b:1.965448, c:0.764849, d:0.00002},
   pmont: {a:0.000047, b:1.905708, c:1.07229, d:0.000051},
-  pteo:  {a:0.000058, b:2.010371, c:0.861837, d:0.000043}
+  pteo:  {a:0.000058, b:2.010371, c:0.861837, d:0.000043},
+  alnus: {a:0.000075, b:1.987352, c:0.775162, d:0.000033},
+  ppatula: {a:0.000065, b:1.860351, c:0.978244, d:0.000033},
+  payac: {a:0.000058, b:1.787602, c:1.081127, d:0.000056},
+  basal: {k:0.7854}
 };
-const EXPECTED_HASH = 'b9a9f41dd08c8cb5c300efc655b95b2eda7478347f66f8ea882cdc371d6aefbe';
+const EXPECTED_HASH = 'ea14a9ea4ad3f7435a7590c35a4365558bb98534a4373f9b8f63706aafbf5b97';
+
+function calcBasalArea(D){
+  return Math.pow(D/100, 2) * FORMULA_PARAMS.basal.k;
+}
 
 const SPECIES = {
   abies:  { name: 'Abies religiosa',    calc: (D,H) => FORMULA_PARAMS.abies.a*Math.pow(D,FORMULA_PARAMS.abies.b)*Math.pow(H,FORMULA_PARAMS.abies.c) + FORMULA_PARAMS.abies.d*Math.pow(D,2) },
   pmont:  { name: 'Pinus montezumae',   calc: (D,H) => FORMULA_PARAMS.pmont.a*Math.pow(D,FORMULA_PARAMS.pmont.b)*Math.pow(H,FORMULA_PARAMS.pmont.c) + FORMULA_PARAMS.pmont.d*Math.pow(D,2) },
-  pteo:   { name: 'Pinus teocote',      calc: (D,H) => FORMULA_PARAMS.pteo.a*Math.pow(D,FORMULA_PARAMS.pteo.b)*Math.pow(H,FORMULA_PARAMS.pteo.c) + FORMULA_PARAMS.pteo.d*Math.pow(D,2) }
+  pteo:   { name: 'Pinus teocote',      calc: (D,H) => FORMULA_PARAMS.pteo.a*Math.pow(D,FORMULA_PARAMS.pteo.b)*Math.pow(H,FORMULA_PARAMS.pteo.c) + FORMULA_PARAMS.pteo.d*Math.pow(D,2) },
+  alnus:  { name: 'Alnus acuminata',    calc: (D,H) => FORMULA_PARAMS.alnus.a*Math.pow(D,FORMULA_PARAMS.alnus.b)*Math.pow(H,FORMULA_PARAMS.alnus.c) + FORMULA_PARAMS.alnus.d*Math.pow(D,2) },
+  ppatula:{ name: 'Pinus patula',       calc: (D,H) => FORMULA_PARAMS.ppatula.a*Math.pow(D,FORMULA_PARAMS.ppatula.b)*Math.pow(H,FORMULA_PARAMS.ppatula.c) + FORMULA_PARAMS.ppatula.d*Math.pow(D,2) },
+  payac:  { name: 'Pinus ayacahuite',   calc: (D,H) => FORMULA_PARAMS.payac.a*Math.pow(D,FORMULA_PARAMS.payac.b)*Math.pow(H,FORMULA_PARAMS.payac.c) + FORMULA_PARAMS.payac.d*Math.pow(D,2) }
 };
 
 async function checkIntegrity(){
@@ -573,21 +687,45 @@ const resultBlock = document.getElementById('resultBlock');
 const ringWrap = document.getElementById('ringWrap');
 const resultSpecies = document.getElementById('resultSpecies');
 const resultValue = document.getElementById('resultValue');
+const resultBasal = document.getElementById('resultBasal');
 const addBtn = document.getElementById('addBtn');
 const logBody = document.getElementById('logBody');
 const logTotal = document.getElementById('logTotal');
+const logTotalBasal = document.getElementById('logTotalBasal');
 const speciesSubtotals = document.getElementById('speciesSubtotals');
 const toast = document.getElementById('toast');
 
 let currentSpeciesKey = 'abies';
 let lastResult = null;
 
-// Species selector
+// Species selector (desplegable)
+const speciesSelectBtn = document.getElementById('speciesSelectBtn');
+const speciesSelectedName = document.getElementById('speciesSelectedName');
+const speciesDropdown = document.getElementById('speciesDropdown');
+
+function closeSpeciesDropdown(){
+  speciesSelectBtn.classList.remove('open');
+  speciesDropdown.classList.remove('open');
+}
+
+speciesSelectBtn.addEventListener('click', () => {
+  const isOpen = speciesDropdown.classList.toggle('open');
+  speciesSelectBtn.classList.toggle('open', isOpen);
+});
+
+document.addEventListener('click', (e) => {
+  if(!speciesSelectBtn.contains(e.target) && !speciesDropdown.contains(e.target)){
+    closeSpeciesDropdown();
+  }
+});
+
 document.querySelectorAll('.species-tag').forEach(tag => {
   tag.addEventListener('click', () => {
     document.querySelectorAll('.species-tag').forEach(t => t.classList.remove('active'));
     tag.classList.add('active');
     currentSpeciesKey = tag.dataset.key;
+    speciesSelectedName.textContent = tag.querySelector('.name').textContent;
+    closeSpeciesDropdown();
   });
 });
 
@@ -621,9 +759,11 @@ function calcVolume(){
 
   const species = SPECIES[currentSpeciesKey];
   const V = species.calc(D, H);
+  const AB = calcBasalArea(D);
 
   resultSpecies.textContent = species.name;
   resultValue.innerHTML = V.toFixed(4) + '<span class="unit">m³</span>';
+  resultBasal.innerHTML = 'AB: ' + AB.toFixed(4) + '<span class="unit">m²</span>';
   resultBlock.classList.add('show');
   addBtn.classList.remove('added');
   addBtn.textContent = '+ Agregar al registro';
@@ -632,7 +772,7 @@ function calcVolume(){
   void ringWrap.offsetWidth; // restart animation
   requestAnimationFrame(() => ringWrap.classList.add('grown'));
 
-  lastResult = { species: species.name, D, H, V };
+  lastResult = { species: species.name, D, H, V, AB };
 }
 
 calcBtn.addEventListener('click', calcVolume);
@@ -652,41 +792,53 @@ function renderLog(){
     speciesSubtotals.innerHTML = '';
     logBody.innerHTML = '<p class="log-empty">Aún no hay árboles registrados.</p>';
     logTotal.textContent = '0.0000';
+    logTotalBasal.textContent = '0.0000';
     return;
   }
   let total = 0;
+  let totalBasal = 0;
   let rows = '';
   const bySpecies = {}; // preserves order of first appearance
 
-  log.forEach((entry, i) => {
+  log.forEach((entry) => {
     total += entry.V;
+    const AB = entry.AB != null ? entry.AB : calcBasalArea(entry.D);
+    totalBasal += AB;
+    if(!bySpecies[entry.species]) bySpecies[entry.species] = { count: 0, sum: 0, sumAB: 0 };
+    bySpecies[entry.species].count += 1;
+    bySpecies[entry.species].sum += entry.V;
+    bySpecies[entry.species].sumAB += AB;
+  });
+
+  // Más recientes arriba, conservando el número de registro original
+  const reversedWithIndex = log.map((entry, i) => ({ entry, num: i + 1 })).reverse();
+  reversedWithIndex.forEach(({ entry, num }) => {
+    const AB = entry.AB != null ? entry.AB : calcBasalArea(entry.D);
     rows += `<tr>
-      <td>${i+1}</td>
+      <td>${num}</td>
       <td class="date-cell">${entry.date ? entry.date + (entry.time ? '<br><span class="time">'+entry.time+'</span>' : '') : '—'}</td>
       <td><em>${entry.species}</em></td>
       <td class="num">${entry.D}</td>
       <td class="num">${entry.H}</td>
       <td class="num">${entry.V.toFixed(4)}</td>
+      <td class="num">${AB.toFixed(4)}</td>
     </tr>`;
-
-    if(!bySpecies[entry.species]) bySpecies[entry.species] = { count: 0, sum: 0 };
-    bySpecies[entry.species].count += 1;
-    bySpecies[entry.species].sum += entry.V;
   });
 
   speciesSubtotals.innerHTML = `<div class="subtotals">${
     Object.entries(bySpecies).map(([name, s]) => `
       <div class="subtotal-row">
         <span class="st-name">${name}<span class="st-count">· ${s.count} ${s.count === 1 ? 'árbol' : 'árboles'}</span></span>
-        <span class="st-value">${s.sum.toFixed(4)}<span class="u">m³</span></span>
+        <span class="st-value">${s.sum.toFixed(4)}<span class="u">m³</span> · ${s.sumAB.toFixed(4)}<span class="u">m²</span></span>
       </div>`).join('')
   }</div>`;
 
-  logBody.innerHTML = `<table class="log-table">
-    <thead><tr><th>#</th><th>Fecha</th><th>Especie</th><th>D (cm)</th><th>H (m)</th><th>V (m³)</th></tr></thead>
+  logBody.innerHTML = `<div class="log-scroll"><table class="log-table">
+    <thead><tr><th>#</th><th>Fecha</th><th>Especie</th><th>D (cm)</th><th>H (m)</th><th>V (m³)</th><th>AB (m²)</th></tr></thead>
     <tbody>${rows}</tbody>
-  </table>`;
+  </table></div>`;
   logTotal.textContent = total.toFixed(4);
+  logTotalBasal.textContent = totalBasal.toFixed(4);
 }
 
 addBtn.addEventListener('click', () => {
@@ -705,10 +857,33 @@ addBtn.addEventListener('click', () => {
 });
 
 document.getElementById('clearBtn').addEventListener('click', () => {
-  if(confirm('¿Vaciar todo el registro de campo? Esta acción no se puede deshacer.')){
+  const log = loadLog();
+  if(log.length === 0){ showToast('El registro ya está vacío'); return; }
+
+  const confirmMsg = '¿Vaciar todo el registro de campo?\n\nSe guardará una copia de respaldo por si te equivocas — podrás recuperarla con el botón "Restaurar respaldo".';
+  if(confirm(confirmMsg)){
+    localStorage.setItem('cubicador_log_backup', JSON.stringify({
+      savedAt: new Date().toLocaleString('es-MX'),
+      entries: log
+    }));
     localStorage.removeItem('cubicador_log');
     renderLog();
+    showToast('Registro vaciado (se guardó un respaldo)');
   }
+});
+
+document.getElementById('restoreBtn').addEventListener('click', () => {
+  const raw = localStorage.getItem('cubicador_log_backup');
+  if(!raw){ showToast('No hay ningún respaldo guardado'); return; }
+  const backup = JSON.parse(raw);
+
+  const current = loadLog();
+  if(current.length > 0){
+    if(!confirm(`Tienes ${current.length} registro(s) actual(es). El respaldo del ${backup.savedAt} se agregará a continuación de estos, sin borrar nada. ¿Continuar?`)) return;
+  }
+  saveLog([...current, ...backup.entries]);
+  renderLog();
+  showToast('Respaldo restaurado');
 });
 
 function escapeXml(str){
@@ -721,10 +896,13 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   if(log.length === 0){ showToast('El registro está vacío'); return; }
 
   let total = 0;
+  let totalBasal = 0;
   let rowsXml = '';
   const bySpeciesExport = {};
   log.forEach((entry, i) => {
     total += entry.V;
+    const AB = entry.AB != null ? entry.AB : calcBasalArea(entry.D);
+    totalBasal += AB;
     const fechaHora = entry.date ? (entry.date + (entry.time ? ' ' + entry.time : '')) : '';
     rowsXml += `
       <Row>
@@ -734,10 +912,12 @@ document.getElementById('exportBtn').addEventListener('click', () => {
         <Cell><Data ss:Type="Number">${entry.D}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.H}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.V.toFixed(6)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${AB.toFixed(6)}</Data></Cell>
       </Row>`;
-    if(!bySpeciesExport[entry.species]) bySpeciesExport[entry.species] = { count: 0, sum: 0 };
+    if(!bySpeciesExport[entry.species]) bySpeciesExport[entry.species] = { count: 0, sum: 0, sumAB: 0 };
     bySpeciesExport[entry.species].count += 1;
     bySpeciesExport[entry.species].sum += entry.V;
+    bySpeciesExport[entry.species].sumAB += AB;
   });
 
   let subtotalRowsXml = '';
@@ -747,6 +927,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
         <Cell><Data ss:Type="String">${escapeXml(name)}</Data></Cell>
         <Cell><Data ss:Type="Number">${s.count}</Data></Cell>
         <Cell><Data ss:Type="Number">${s.sum.toFixed(6)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${s.sumAB.toFixed(6)}</Data></Cell>
       </Row>`;
   });
 
@@ -775,6 +956,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
    <Column ss:Width="70"/>
    <Column ss:Width="70"/>
    <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
    <Row>
     <Cell ss:StyleID="Header"><Data ss:Type="String">#</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha</Data></Cell>
@@ -782,6 +964,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell ss:StyleID="Header"><Data ss:Type="String">Diametro (cm)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Altura (m)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen (m3)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Area basal (m2)</Data></Cell>
    </Row>${rowsXml}
    <Row>
     <Cell></Cell>
@@ -790,6 +973,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell></Cell>
     <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total</Data></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBasal.toFixed(6)}</Data></Cell>
    </Row>
    <Row></Row>
    <Row>
@@ -802,16 +986,19 @@ document.getElementById('exportBtn').addEventListener('click', () => {
    <Column ss:Width="150"/>
    <Column ss:Width="70"/>
    <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
    <Row>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Especie</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Arboles</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen acumulado (m3)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Area basal acumulada (m2)</Data></Cell>
    </Row>${subtotalRowsXml}
    <Row></Row>
    <Row>
     <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total general</Data></Cell>
     <Cell></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBasal.toFixed(6)}</Data></Cell>
    </Row>
   </Table>
  </Worksheet>
@@ -833,22 +1020,26 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 document.getElementById('copyBtn').addEventListener('click', () => {
   const log = loadLog();
   if(log.length === 0){ showToast('El registro está vacío'); return; }
-  let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\n';
+  let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\tAB (m²)\n';
   let total = 0;
+  let totalBasal = 0;
   const bySpeciesCopy = {};
   log.forEach(e => {
     total += e.V;
+    const AB = e.AB != null ? e.AB : calcBasalArea(e.D);
+    totalBasal += AB;
     const fechaHora = e.date ? (e.date + (e.time ? ' ' + e.time : '')) : '';
-    text += `${fechaHora}\t${e.species}\t${e.D}\t${e.H}\t${e.V.toFixed(4)}\n`;
-    if(!bySpeciesCopy[e.species]) bySpeciesCopy[e.species] = { count: 0, sum: 0 };
+    text += `${fechaHora}\t${e.species}\t${e.D}\t${e.H}\t${e.V.toFixed(4)}\t${AB.toFixed(4)}\n`;
+    if(!bySpeciesCopy[e.species]) bySpeciesCopy[e.species] = { count: 0, sum: 0, sumAB: 0 };
     bySpeciesCopy[e.species].count += 1;
     bySpeciesCopy[e.species].sum += e.V;
+    bySpeciesCopy[e.species].sumAB += AB;
   });
-  text += `\nTotal\t\t\t\t${total.toFixed(4)}`;
+  text += `\nTotal\t\t\t\t${total.toFixed(4)}\t${totalBasal.toFixed(4)}`;
 
-  text += '\n\nSubtotales por especie\nEspecie\tArboles\tV acumulado (m³)\n';
+  text += '\n\nSubtotales por especie\nEspecie\tArboles\tV acumulado (m³)\tAB acumulada (m²)\n';
   Object.entries(bySpeciesCopy).forEach(([name, s]) => {
-    text += `${name}\t${s.count}\t${s.sum.toFixed(4)}\n`;
+    text += `${name}\t${s.count}\t${s.sum.toFixed(4)}\t${s.sumAB.toFixed(4)}\n`;
   });
 
   const finish = () => showToast('Registro copiado');
