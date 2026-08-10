@@ -188,6 +188,113 @@
   /* Inputs with steppers */
   .field{ margin-bottom: 14px; }
   .field:last-child{ margin-bottom: 0; }
+  .field-note{
+    margin: 6px 2px 0;
+    font-size: 11px;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+  .toggle-group{
+    display: flex;
+    gap: 8px;
+  }
+  .toggle-btn{
+    flex: 1;
+    padding: 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink-muted);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .toggle-btn.active{
+    border-color: var(--amber);
+    background: #2A3729;
+    color: var(--ink);
+  }
+  .metodo-select{
+    width: 100%;
+    padding: 13px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13.5px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C9A66B' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+  }
+  .metodo-select option{ background: var(--panel); color: var(--ink); }
+
+  .params-toggle-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .params-toggle-btn .chevron{
+    color: var(--amber);
+    font-size: 14px;
+    transition: transform .2s ease;
+  }
+  .params-toggle-btn.open .chevron{ transform: rotate(180deg); }
+  .params-panel{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease;
+  }
+  .params-panel.open{ max-height: 1400px; margin-top: 14px; }
+  .params-warning{
+    background: rgba(201,166,107,0.1);
+    border: 1px solid rgba(201,166,107,0.3);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0 0 16px;
+  }
+  .params-subtitle{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 18px 0 10px;
+  }
+  .params-subtitle:first-of-type{ margin-top: 0; }
+  .save-params-btn{
+    width: 100%;
+    margin-top: 6px;
+    padding: 13px;
+    background: var(--pine);
+    color: #14201A;
+    border: none;
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .save-params-btn:active{ background: #93B98D; }
+  .result-biomass{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin: 6px 0 0;
+  }
   .field label{
     display:block;
     font-size: 12.5px;
@@ -460,21 +567,60 @@
   }
   .log-actions button:active{ background: var(--line); }
   .log-actions button.danger{ color: var(--danger); }
-  .restore-link{
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    background: none;
-    border: none;
-    color: var(--ink-muted);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    cursor: pointer;
-    padding: 4px;
+
+  .backup-warning-banner{
+    background: rgba(201,123,107,0.12);
+    border: 1px solid rgba(201,123,107,0.35);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--danger);
+    margin-top: 10px !important;
   }
-  .restore-link:active{ color: var(--pine); }
+  .backup-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .backup-info{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .backup-date{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .backup-meta{
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .backup-restore-btn{
+    flex-shrink: 0;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--pine);
+    color: var(--pine);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+  }
+  .backup-restore-btn:active{ background: rgba(130,168,125,0.12); }
+  .backup-clear-btn{
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    margin-top: 16px;
+  }
+  .backup-clear-btn:active{ background: rgba(201,123,107,0.1); }
 
   footer{
     margin-top: 22px;
@@ -482,6 +628,13 @@
     font-size: 11.5px;
     line-height: 1.6;
     color: var(--ink-muted);
+  }
+  footer .citation{
+    margin: 10px 0 0;
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--ink-muted);
+    opacity: 0.85;
   }
   footer .credit{
     margin: 10px 0 0;
@@ -590,6 +743,98 @@
   </section>
 
   <section class="card">
+    <p class="card-title">Datos de saneamiento (opcional · NOM-019)</p>
+    <div class="field">
+      <label for="pendienteInput">Pendiente del terreno</label>
+      <div class="stepper">
+        <button type="button" data-target="pendienteInput" data-step="-5">−</button>
+        <input id="pendienteInput" type="number" inputmode="decimal" value="0" min="0" step="1">
+        <span class="unit">%</span>
+        <button type="button" data-target="pendienteInput" data-step="5">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="trozasInput">Trozas obtenidas (≥ 9 cm diámetro)</label>
+      <div class="stepper">
+        <button type="button" data-target="trozasInput" data-step="-1">−</button>
+        <input id="trozasInput" type="number" inputmode="numeric" value="0" min="0" step="1">
+        <span class="unit">pz</span>
+        <button type="button" data-target="trozasInput" data-step="1">+</button>
+      </div>
+      <p class="field-note">Lo que quede por debajo de 9 cm se clasifica como punta del árbol.</p>
+    </div>
+    <div class="field">
+      <label>Descortezado realizado</label>
+      <div class="toggle-group" id="descortezadoToggle">
+        <button type="button" class="toggle-btn active" data-value="si">Sí</button>
+        <button type="button" class="toggle-btn" data-value="no">No</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Tocón ≤ 30 cm de altura</label>
+      <div class="toggle-group" id="tabconToggle">
+        <button type="button" class="toggle-btn active" data-value="si">Sí</button>
+        <button type="button" class="toggle-btn" data-value="no">No</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="metodoSelect">Método de combate y control (num. 5.8)</label>
+      <select id="metodoSelect" class="metodo-select">
+        <option value="1">1. Derribo, troceo y descortezado mecánico</option>
+        <option value="2">2. Derribo, troceo, descortezado manual y quema de corteza</option>
+        <option value="3">3. Derribo, troceo, descortezado manual y enterrado de corteza</option>
+        <option value="4">4. Derribo, troceo y quema de trozas, puntas o ramas</option>
+        <option value="5">5. Derribo, troceo y astillado</option>
+        <option value="6">6. Derribo y extracción inmediata</option>
+        <option value="7">7. Derribo y abandono</option>
+        <option value="8">8. Derribo, troceo y aplicación de químico</option>
+        <option value="9">9. Derribo, troceo, descortezado y aplicación de químico</option>
+        <option value="10">10. Extracción con raíz</option>
+        <option value="11">11. Uso de antiagregantes</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="card">
+    <button type="button" class="params-toggle-btn" id="paramsToggleBtn">
+      <span>⚙ Parámetros de biomasa y carbono</span>
+      <span class="chevron" id="paramsChevron">▾</span>
+    </button>
+    <div class="params-panel" id="paramsPanel">
+      <p class="field-note params-warning">Valores de referencia iniciales (bases internacionales tipo IPCC / densidad de madera genérica) — ajústalos si tienes datos propios de INIFAP, CONAFOR o laboratorio. No son mediciones específicas de tus rodales.</p>
+
+      <p class="params-subtitle">Densidad básica por especie (kg/m³)</p>
+      <div class="field"><label for="dens_abies">Abies religiosa</label>
+        <div class="stepper"><button type="button" data-target="dens_abies" data-step="-10">−</button><input id="dens_abies" type="number" value="380" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_abies" data-step="10">+</button></div>
+      </div>
+      <div class="field"><label for="dens_pmont">Pinus montezumae</label>
+        <div class="stepper"><button type="button" data-target="dens_pmont" data-step="-10">−</button><input id="dens_pmont" type="number" value="500" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_pmont" data-step="10">+</button></div>
+      </div>
+      <div class="field"><label for="dens_pteo">Pinus teocote</label>
+        <div class="stepper"><button type="button" data-target="dens_pteo" data-step="-10">−</button><input id="dens_pteo" type="number" value="540" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_pteo" data-step="10">+</button></div>
+      </div>
+      <div class="field"><label for="dens_alnus">Alnus acuminata</label>
+        <div class="stepper"><button type="button" data-target="dens_alnus" data-step="-10">−</button><input id="dens_alnus" type="number" value="450" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_alnus" data-step="10">+</button></div>
+      </div>
+      <div class="field"><label for="dens_ppatula">Pinus patula</label>
+        <div class="stepper"><button type="button" data-target="dens_ppatula" data-step="-10">−</button><input id="dens_ppatula" type="number" value="440" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_ppatula" data-step="10">+</button></div>
+      </div>
+      <div class="field"><label for="dens_payac">Pinus ayacahuite</label>
+        <div class="stepper"><button type="button" data-target="dens_payac" data-step="-10">−</button><input id="dens_payac" type="number" value="450" min="0" step="1"><span class="unit">kg/m³</span><button type="button" data-target="dens_payac" data-step="10">+</button></div>
+      </div>
+
+      <p class="params-subtitle">Factores generales</p>
+      <div class="field"><label for="paramBEF">Factor de Expansión de Biomasa (BEF)</label>
+        <div class="stepper"><button type="button" data-target="paramBEF" data-step="-0.05">−</button><input id="paramBEF" type="number" value="1.3" min="1" step="0.01"><span class="unit">×</span><button type="button" data-target="paramBEF" data-step="0.05">+</button></div>
+      </div>
+      <div class="field"><label for="paramCF">Fracción de carbono</label>
+        <div class="stepper"><button type="button" data-target="paramCF" data-step="-0.01">−</button><input id="paramCF" type="number" value="0.47" min="0" max="1" step="0.01"><span class="unit">×</span><button type="button" data-target="paramCF" data-step="0.01">+</button></div>
+      </div>
+      <button type="button" class="save-params-btn" id="saveParamsBtn">Guardar parámetros</button>
+    </div>
+  </section>
+
+  <section class="card">
     <div class="result" id="resultBlock">
       <div class="ring-wrap" id="ringWrap">
         <svg viewBox="0 0 100 100" width="100%" height="100%">
@@ -603,9 +848,11 @@
       <p class="result-species" id="resultSpecies">Abies religiosa</p>
       <p class="result-value" id="resultValue">0.0000<span class="unit">m³</span></p>
       <p class="result-basal" id="resultBasal">AB: 0.0000<span class="unit">m²</span></p>
+      <p class="result-biomass" id="resultBiomass">Biomasa: 0.00 kg · Carbono: 0.00 kg</p>
       <button class="result-add" id="addBtn">+ Agregar al registro</button>
     </div>
   </section>
+
 
   <section class="card">
     <div class="log-header">
@@ -621,11 +868,25 @@
       <button id="copyBtn">Copiar registro</button>
       <button id="clearBtn" class="danger">Vaciar</button>
     </div>
-    <button class="restore-link" id="restoreBtn">↺ Restaurar respaldo</button>
+  </section>
+
+  <section class="card">
+    <button type="button" class="params-toggle-btn" id="backupsToggleBtn">
+      <span>📦 Respaldos automáticos (<span id="backupsCounter">0/10</span>)</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="params-panel" id="backupsPanel">
+      <p class="field-note" style="margin-top:14px;">La app guarda un respaldo automático solo cuando se cierra por completo (para casos de emergencia), otro antes de cada "Vaciar", y puedes hacer uno manual cuando quieras — hasta un máximo de 10. Cambiar de app o apagar la pantalla NO genera un respaldo nuevo. Cada uno se puede restaurar por separado.</p>
+      <p class="field-note backup-warning-banner" id="backupsWarning" style="display:none;">⚠ Llegaste al máximo de 10 respaldos. Te recomendamos descargar tu registro en Excel y vaciarlo (o vaciar los respaldos ya exportados) para que la app pueda seguir respaldando información nueva.</p>
+      <div id="backupsListBody"></div>
+      <button type="button" class="save-params-btn" id="backupNowBtn">💾 Respaldar ahora</button>
+      <button type="button" class="save-params-btn backup-clear-btn" id="clearBackupsBtn">Vaciar todos los respaldos</button>
+    </div>
   </section>
 
   <footer>
     DAP en cm · altura en m · volumen total árbol (VTA) en m³, según las ecuaciones de volumen proporcionadas para cada especie. El registro se guarda solo en este celular.
+    <p class="citation">Ecuaciones de volumen: Sistema Biométrico Forestal (SiBiFor), Vargas-Larreta et al., 2017.</p>
     <p class="credit">Aplicación creada por el Ing. José Antonio Cortés Ojeda.</p>
   </footer>
 </div>
@@ -660,6 +921,48 @@ const SPECIES = {
   payac:  { name: 'Pinus ayacahuite',   calc: (D,H) => FORMULA_PARAMS.payac.a*Math.pow(D,FORMULA_PARAMS.payac.b)*Math.pow(H,FORMULA_PARAMS.payac.c) + FORMULA_PARAMS.payac.d*Math.pow(D,2) }
 };
 
+// Parámetros de biomasa/carbono: ajustables por el usuario, guardados en el celular
+const BIOMASS_DEFAULTS = {
+  abies: 380, pmont: 500, pteo: 540, alnus: 450, ppatula: 440, payac: 450,
+  bef: 1.3, cf: 0.47
+};
+function loadBiomassParams(){
+  try{
+    const raw = localStorage.getItem('cubicador_biomasa_params');
+    return raw ? { ...BIOMASS_DEFAULTS, ...JSON.parse(raw) } : { ...BIOMASS_DEFAULTS };
+  }catch(e){ return { ...BIOMASS_DEFAULTS }; }
+}
+function saveBiomassParamsFromUI(){
+  const params = {
+    abies: parseFloat(document.getElementById('dens_abies').value) || 0,
+    pmont: parseFloat(document.getElementById('dens_pmont').value) || 0,
+    pteo: parseFloat(document.getElementById('dens_pteo').value) || 0,
+    alnus: parseFloat(document.getElementById('dens_alnus').value) || 0,
+    ppatula: parseFloat(document.getElementById('dens_ppatula').value) || 0,
+    payac: parseFloat(document.getElementById('dens_payac').value) || 0,
+    bef: parseFloat(document.getElementById('paramBEF').value) || 1,
+    cf: parseFloat(document.getElementById('paramCF').value) || 0.47
+  };
+  localStorage.setItem('cubicador_biomasa_params', JSON.stringify(params));
+  return params;
+}
+function populateBiomassParamsUI(params){
+  document.getElementById('dens_abies').value = params.abies;
+  document.getElementById('dens_pmont').value = params.pmont;
+  document.getElementById('dens_pteo').value = params.pteo;
+  document.getElementById('dens_alnus').value = params.alnus;
+  document.getElementById('dens_ppatula').value = params.ppatula;
+  document.getElementById('dens_payac').value = params.payac;
+  document.getElementById('paramBEF').value = params.bef;
+  document.getElementById('paramCF').value = params.cf;
+}
+function calcBiomassCarbon(V, speciesKey, params){
+  const density = params[speciesKey] != null ? params[speciesKey] : 450;
+  const biomass = V * density * params.bef;      // kg
+  const carbon = biomass * params.cf;             // kg
+  return { biomass, carbon };
+}
+
 async function checkIntegrity(){
   try{
     if(!window.crypto || !window.crypto.subtle) return; // sin soporte: no bloquear
@@ -688,6 +991,7 @@ const ringWrap = document.getElementById('ringWrap');
 const resultSpecies = document.getElementById('resultSpecies');
 const resultValue = document.getElementById('resultValue');
 const resultBasal = document.getElementById('resultBasal');
+const resultBiomass = document.getElementById('resultBiomass');
 const addBtn = document.getElementById('addBtn');
 const logBody = document.getElementById('logBody');
 const logTotal = document.getElementById('logTotal');
@@ -729,6 +1033,20 @@ document.querySelectorAll('.species-tag').forEach(tag => {
   });
 });
 
+// Panel de parámetros de biomasa/carbono
+const paramsToggleBtn = document.getElementById('paramsToggleBtn');
+const paramsPanel = document.getElementById('paramsPanel');
+populateBiomassParamsUI(loadBiomassParams());
+paramsToggleBtn.addEventListener('click', () => {
+  const isOpen = paramsPanel.classList.toggle('open');
+  paramsToggleBtn.classList.toggle('open', isOpen);
+});
+document.getElementById('saveParamsBtn').addEventListener('click', () => {
+  saveBiomassParamsFromUI();
+  showToast('Parámetros guardados');
+  calcVolume();
+});
+
 // Steppers
 document.querySelectorAll('.stepper button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -739,6 +1057,20 @@ document.querySelectorAll('.stepper button').forEach(btn => {
     target.value = val;
   });
 });
+
+// Toggles Sí/No (descortezado, tocón)
+document.querySelectorAll('.toggle-group').forEach(group => {
+  group.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+});
+function getToggleValue(groupId){
+  const active = document.querySelector(`#${groupId} .toggle-btn.active`);
+  return active ? active.dataset.value : 'si';
+}
 
 function showToast(msg){
   toast.textContent = msg;
@@ -760,10 +1092,13 @@ function calcVolume(){
   const species = SPECIES[currentSpeciesKey];
   const V = species.calc(D, H);
   const AB = calcBasalArea(D);
+  const params = loadBiomassParams();
+  const { biomass, carbon } = calcBiomassCarbon(V, currentSpeciesKey, params);
 
   resultSpecies.textContent = species.name;
   resultValue.innerHTML = V.toFixed(4) + '<span class="unit">m³</span>';
   resultBasal.innerHTML = 'AB: ' + AB.toFixed(4) + '<span class="unit">m²</span>';
+  resultBiomass.textContent = `Biomasa: ${biomass.toFixed(2)} kg · Carbono: ${carbon.toFixed(2)} kg`;
   resultBlock.classList.add('show');
   addBtn.classList.remove('added');
   addBtn.textContent = '+ Agregar al registro';
@@ -772,7 +1107,7 @@ function calcVolume(){
   void ringWrap.offsetWidth; // restart animation
   requestAnimationFrame(() => ringWrap.classList.add('grown'));
 
-  lastResult = { species: species.name, D, H, V, AB };
+  lastResult = { species: species.name, D, H, V, AB, biomass, carbon };
 }
 
 calcBtn.addEventListener('click', calcVolume);
@@ -845,10 +1180,16 @@ addBtn.addEventListener('click', () => {
   if(!lastResult || addBtn.classList.contains('added')) return;
   const log = loadLog();
   const now = new Date();
+  const metodoSelect = document.getElementById('metodoSelect');
   log.push({
     ...lastResult,
     date: now.toLocaleDateString('es-MX'),
-    time: now.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'})
+    time: now.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}),
+    pendiente: parseFloat(document.getElementById('pendienteInput').value) || 0,
+    trozas: parseInt(document.getElementById('trozasInput').value) || 0,
+    descortezado: getToggleValue('descortezadoToggle'),
+    tocon30: getToggleValue('tabconToggle'),
+    metodo: metodoSelect.options[metodoSelect.selectedIndex].text
   });
   saveLog(log);
   renderLog();
@@ -856,35 +1197,131 @@ addBtn.addEventListener('click', () => {
   addBtn.textContent = '✓ Agregado';
 });
 
+const MAX_BACKUPS = 10;
+
+function loadBackups(){
+  try{
+    // Migración desde el respaldo antiguo de un solo slot, si existiera
+    const old = localStorage.getItem('cubicador_log_backup');
+    if(old){
+      const parsed = JSON.parse(old);
+      const migrated = [{ savedAt: parsed.savedAt, entries: parsed.entries, reason: 'manual' }];
+      localStorage.setItem('cubicador_backups', JSON.stringify(migrated));
+      localStorage.removeItem('cubicador_log_backup');
+    }
+    const raw = localStorage.getItem('cubicador_backups');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveBackups(list){
+  localStorage.setItem('cubicador_backups', JSON.stringify(list));
+}
+function pushBackup(entries, reason){
+  if(!entries || entries.length === 0) return;
+  const list = loadBackups();
+  const last = list[list.length - 1];
+  // Evita respaldos duplicados consecutivos (p. ej. si el celular se oculta varias veces sin cambios)
+  if(last && JSON.stringify(last.entries) === JSON.stringify(entries)) return;
+  list.push({ savedAt: new Date().toLocaleString('es-MX'), entries, reason });
+  while(list.length > MAX_BACKUPS) list.shift();
+  saveBackups(list);
+  renderBackupsPanel();
+}
+
+function renderBackupsPanel(){
+  const list = loadBackups();
+  const count = list.length;
+  document.getElementById('backupsCounter').textContent = `${count}/${MAX_BACKUPS}`;
+
+  const warningEl = document.getElementById('backupsWarning');
+  warningEl.style.display = count >= MAX_BACKUPS ? 'block' : 'none';
+
+  const body = document.getElementById('backupsListBody');
+  if(count === 0){
+    body.innerHTML = '<p class="log-empty">Aún no hay respaldos guardados.</p>';
+    return;
+  }
+  const reasonLabel = r => r === 'manual_clear' ? 'Antes de vaciar' : (r === 'manual' ? 'Manual' : 'Automático (cierre de app)');
+  body.innerHTML = [...list].reverse().map((b, i) => {
+    const realIdx = count - 1 - i; // índice real en el arreglo (sin invertir)
+    return `<div class="backup-row">
+      <div class="backup-info">
+        <span class="backup-date">${b.savedAt}</span>
+        <span class="backup-meta">${b.entries.length} ${b.entries.length === 1 ? 'árbol' : 'árboles'} · ${reasonLabel(b.reason)}</span>
+      </div>
+      <button type="button" class="backup-restore-btn" data-idx="${realIdx}">Restaurar</button>
+    </div>`;
+  }).join('');
+
+  body.querySelectorAll('.backup-restore-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const backups = loadBackups();
+      const backup = backups[idx];
+      if(!backup) return;
+      const current = loadLog();
+      if(current.length > 0){
+        if(!confirm(`Tienes ${current.length} registro(s) actual(es). El respaldo del ${backup.savedAt} se agregará a continuación de estos, sin borrar nada. ¿Continuar?`)) return;
+      }
+      saveLog([...current, ...backup.entries]);
+      renderLog();
+      showToast('Respaldo restaurado');
+    });
+  });
+}
+
+document.getElementById('clearBackupsBtn').addEventListener('click', () => {
+  const list = loadBackups();
+  if(list.length === 0){ showToast('No hay respaldos que vaciar'); return; }
+  if(confirm('¿Vaciar todos los respaldos guardados? Asegúrate de haber exportado a Excel lo que necesites conservar — esta acción no se puede deshacer.')){
+    localStorage.removeItem('cubicador_backups');
+    renderBackupsPanel();
+    showToast('Respaldos vaciados');
+  }
+});
+
+// Respaldo automático SOLO cuando la app se cierra de verdad (no al cambiar de app o apagar pantalla)
+window.addEventListener('pagehide', () => {
+  pushBackup(loadLog(), 'auto');
+});
+window.addEventListener('beforeunload', () => {
+  pushBackup(loadLog(), 'auto');
+});
+
 document.getElementById('clearBtn').addEventListener('click', () => {
   const log = loadLog();
   if(log.length === 0){ showToast('El registro ya está vacío'); return; }
 
-  const confirmMsg = '¿Vaciar todo el registro de campo?\n\nSe guardará una copia de respaldo por si te equivocas — podrás recuperarla con el botón "Restaurar respaldo".';
+  const confirmMsg = '¿Vaciar todo el registro de campo?\n\nSe guardará una copia de respaldo por si te equivocas — podrás recuperarla en el panel de respaldos.';
   if(confirm(confirmMsg)){
-    localStorage.setItem('cubicador_log_backup', JSON.stringify({
-      savedAt: new Date().toLocaleString('es-MX'),
-      entries: log
-    }));
+    pushBackup(log, 'manual_clear');
     localStorage.removeItem('cubicador_log');
     renderLog();
     showToast('Registro vaciado (se guardó un respaldo)');
   }
 });
 
-document.getElementById('restoreBtn').addEventListener('click', () => {
-  const raw = localStorage.getItem('cubicador_log_backup');
-  if(!raw){ showToast('No hay ningún respaldo guardado'); return; }
-  const backup = JSON.parse(raw);
-
-  const current = loadLog();
-  if(current.length > 0){
-    if(!confirm(`Tienes ${current.length} registro(s) actual(es). El respaldo del ${backup.savedAt} se agregará a continuación de estos, sin borrar nada. ¿Continuar?`)) return;
+document.getElementById('backupNowBtn').addEventListener('click', () => {
+  const log = loadLog();
+  if(log.length === 0){ showToast('No hay nada que respaldar todavía'); return; }
+  const before = loadBackups().length;
+  pushBackup(log, 'manual');
+  const after = loadBackups().length;
+  if(after === before){
+    showToast('Ya existe un respaldo idéntico al más reciente');
+  } else {
+    showToast('Respaldo guardado');
   }
-  saveLog([...current, ...backup.entries]);
-  renderLog();
-  showToast('Respaldo restaurado');
 });
+
+const backupsToggleBtn = document.getElementById('backupsToggleBtn');
+const backupsPanel = document.getElementById('backupsPanel');
+backupsToggleBtn.addEventListener('click', () => {
+  const isOpen = backupsPanel.classList.toggle('open');
+  backupsToggleBtn.classList.toggle('open', isOpen);
+  if(isOpen) renderBackupsPanel();
+});
+renderBackupsPanel();
 
 function escapeXml(str){
   return String(str)
@@ -895,14 +1332,33 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   const log = loadLog();
   if(log.length === 0){ showToast('El registro está vacío'); return; }
 
+  const biomassParams = loadBiomassParams();
+  function speciesKeyByName(name){
+    const found = Object.entries(SPECIES).find(([k, s]) => s.name === name);
+    return found ? found[0] : null;
+  }
+
   let total = 0;
   let totalBasal = 0;
+  let totalTrozas = 0;
+  let totalBiomass = 0;
+  let totalCarbon = 0;
   let rowsXml = '';
+  let verifRowsXml = '';
   const bySpeciesExport = {};
   log.forEach((entry, i) => {
     total += entry.V;
     const AB = entry.AB != null ? entry.AB : calcBasalArea(entry.D);
     totalBasal += AB;
+    totalTrozas += (entry.trozas || 0);
+    let biomass = entry.biomass, carbon = entry.carbon;
+    if(biomass == null || carbon == null){
+      const key = speciesKeyByName(entry.species);
+      const bc = calcBiomassCarbon(entry.V, key, biomassParams);
+      biomass = bc.biomass; carbon = bc.carbon;
+    }
+    totalBiomass += biomass;
+    totalCarbon += carbon;
     const fechaHora = entry.date ? (entry.date + (entry.time ? ' ' + entry.time : '')) : '';
     rowsXml += `
       <Row>
@@ -913,11 +1369,26 @@ document.getElementById('exportBtn').addEventListener('click', () => {
         <Cell><Data ss:Type="Number">${entry.H}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.V.toFixed(6)}</Data></Cell>
         <Cell><Data ss:Type="Number">${AB.toFixed(6)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.pendiente != null ? entry.pendiente : ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.trozas != null ? entry.trozas : ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${biomass.toFixed(3)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${carbon.toFixed(3)}</Data></Cell>
       </Row>`;
     if(!bySpeciesExport[entry.species]) bySpeciesExport[entry.species] = { count: 0, sum: 0, sumAB: 0 };
     bySpeciesExport[entry.species].count += 1;
     bySpeciesExport[entry.species].sum += entry.V;
     bySpeciesExport[entry.species].sumAB += AB;
+
+    if(entry.metodo){
+      verifRowsXml += `
+      <Row>
+        <Cell><Data ss:Type="Number">${i+1}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(entry.species)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(entry.metodo)}</Data></Cell>
+        <Cell><Data ss:Type="String">${entry.tocon30 === 'si' ? 'Cumple' : 'No cumple'}</Data></Cell>
+        <Cell><Data ss:Type="String">${entry.descortezado === 'si' ? 'Cumple' : (entry.descortezado === 'no' ? 'No aplica' : '')}</Data></Cell>
+      </Row>`;
+    }
   });
 
   let subtotalRowsXml = '';
@@ -957,6 +1428,10 @@ document.getElementById('exportBtn').addEventListener('click', () => {
    <Column ss:Width="70"/>
    <Column ss:Width="90"/>
    <Column ss:Width="90"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
    <Row>
     <Cell ss:StyleID="Header"><Data ss:Type="String">#</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha</Data></Cell>
@@ -965,6 +1440,10 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell ss:StyleID="Header"><Data ss:Type="String">Altura (m)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen (m3)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Area basal (m2)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Pendiente (%)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Trozas (pz)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Biomasa (kg)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Carbono (kg)</Data></Cell>
    </Row>${rowsXml}
    <Row>
     <Cell></Cell>
@@ -974,10 +1453,17 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total</Data></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBasal.toFixed(6)}</Data></Cell>
+    <Cell></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalTrozas}</Data></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBiomass.toFixed(3)}</Data></Cell>
+    <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalCarbon.toFixed(3)}</Data></Cell>
    </Row>
    <Row></Row>
    <Row>
     <Cell><Data ss:Type="String">Exportado: ${dateStr}</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">Parametros usados: BEF=${biomassParams.bef}, Fraccion de carbono=${biomassParams.cf} (valores de referencia, ajustables en la app)</Data></Cell>
    </Row>
   </Table>
  </Worksheet>
@@ -1002,6 +1488,26 @@ document.getElementById('exportBtn').addEventListener('click', () => {
    </Row>
   </Table>
  </Worksheet>
+ <Worksheet ss:Name="Verificacion NOM-019 Anexo4">
+  <Table>
+   <Column ss:Width="30"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="220"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">#</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Especie</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Metodo de combate y control (num. 5.8)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tocon &lt;= 30 cm</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Descortezado</Data></Cell>
+   </Row>${verifRowsXml}
+   <Row></Row>
+   <Row>
+    <Cell><Data ss:Type="String">Referencia: NOM-019-SEMARNAT-2017, numeral 5.8 y Anexo 4 (lista de control de combate y control de descortezadores)</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
 </Workbook>`;
 
   const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' });
@@ -1020,22 +1526,38 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 document.getElementById('copyBtn').addEventListener('click', () => {
   const log = loadLog();
   if(log.length === 0){ showToast('El registro está vacío'); return; }
-  let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\tAB (m²)\n';
+  const biomassParams = loadBiomassParams();
+  function speciesKeyByName(name){
+    const found = Object.entries(SPECIES).find(([k, s]) => s.name === name);
+    return found ? found[0] : null;
+  }
+  let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\tAB (m²)\tPendiente (%)\tTrozas\tBiomasa (kg)\tCarbono (kg)\n';
   let total = 0;
   let totalBasal = 0;
+  let totalTrozas = 0;
+  let totalBiomass = 0;
+  let totalCarbon = 0;
   const bySpeciesCopy = {};
   log.forEach(e => {
     total += e.V;
     const AB = e.AB != null ? e.AB : calcBasalArea(e.D);
     totalBasal += AB;
+    totalTrozas += (e.trozas || 0);
+    let biomass = e.biomass, carbon = e.carbon;
+    if(biomass == null || carbon == null){
+      const bc = calcBiomassCarbon(e.V, speciesKeyByName(e.species), biomassParams);
+      biomass = bc.biomass; carbon = bc.carbon;
+    }
+    totalBiomass += biomass;
+    totalCarbon += carbon;
     const fechaHora = e.date ? (e.date + (e.time ? ' ' + e.time : '')) : '';
-    text += `${fechaHora}\t${e.species}\t${e.D}\t${e.H}\t${e.V.toFixed(4)}\t${AB.toFixed(4)}\n`;
+    text += `${fechaHora}\t${e.species}\t${e.D}\t${e.H}\t${e.V.toFixed(4)}\t${AB.toFixed(4)}\t${e.pendiente != null ? e.pendiente : ''}\t${e.trozas != null ? e.trozas : ''}\t${biomass.toFixed(2)}\t${carbon.toFixed(2)}\n`;
     if(!bySpeciesCopy[e.species]) bySpeciesCopy[e.species] = { count: 0, sum: 0, sumAB: 0 };
     bySpeciesCopy[e.species].count += 1;
     bySpeciesCopy[e.species].sum += e.V;
     bySpeciesCopy[e.species].sumAB += AB;
   });
-  text += `\nTotal\t\t\t\t${total.toFixed(4)}\t${totalBasal.toFixed(4)}`;
+  text += `\nTotal\t\t\t\t${total.toFixed(4)}\t${totalBasal.toFixed(4)}\t\t${totalTrozas}\t${totalBiomass.toFixed(2)}\t${totalCarbon.toFixed(2)}`;
 
   text += '\n\nSubtotales por especie\nEspecie\tArboles\tV acumulado (m³)\tAB acumulada (m²)\n';
   Object.entries(bySpeciesCopy).forEach(([name, s]) => {
