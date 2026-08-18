@@ -524,6 +524,20 @@
   table.log-table td.num{ font-family: 'IBM Plex Mono', monospace; text-align:right; }
   table.log-table td.date-cell{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-muted); white-space: nowrap; }
   table.log-table td.date-cell .time{ color: var(--ink-muted); opacity: 0.75; }
+  table.log-table td.del-cell{ padding-right: 4px; text-align: center; }
+  .row-delete-btn{
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    opacity: 0.8;
+    border-radius: 6px;
+    color: var(--danger);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .row-delete-btn:active{ opacity: 1; background: rgba(201,123,107,0.15); }
   table.log-table tr:last-child td{ border-bottom: none; }
   .log-empty{
     color: var(--ink-muted);
@@ -622,6 +636,68 @@
   }
   .backup-clear-btn:active{ background: rgba(201,123,107,0.1); }
 
+  .cs-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .cs-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .cs-name{ font-family:'Fraunces', serif; font-style:italic; font-size:14.5px; color:var(--ink); }
+  .cs-meta{ font-size:11px; color:var(--ink-muted); font-family:'IBM Plex Mono', monospace; }
+  .cs-delete-btn{
+    flex-shrink:0;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+  }
+  .cs-delete-btn:active{ background: rgba(201,123,107,0.1); }
+
+  .check-list{ display:flex; flex-direction:column; gap:8px; }
+  .check-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding: 11px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .check-row input{ position:absolute; opacity:0; width:0; height:0; }
+  .check-row .check-box{
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--ink-muted);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .check-row input:checked ~ .check-box{
+    background: var(--amber);
+    border-color: var(--amber);
+  }
+  .check-row input:checked ~ .check-box::after{
+    content:'';
+    position:absolute;
+    left: 5px; top: 1px;
+    width: 5px; height: 9px;
+    border: solid #1B2420;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
   footer{
     margin-top: 22px;
     padding: 0 4px;
@@ -677,44 +753,93 @@
   </header>
 
   <section class="card">
+    <p class="card-title">Tipo de censo</p>
+    <div class="toggle-group" id="censoModeToggle" style="flex-direction:column;">
+      <button type="button" class="toggle-btn active" data-value="danado" style="text-align:left;">1. Censo de arbolado dañado</button>
+      <button type="button" class="toggle-btn" data-value="tratado" style="text-align:left;">2. Censo de arbolado tratado</button>
+    </div>
+    <p class="field-note">Define qué pestañas incluye el Excel al exportar: dañado → Censo por brote + Subtotales. Tratado → Registro de campo + Subtotales + Verificación NOM-019.</p>
+  </section>
+
+  <section class="card">
+    <button type="button" class="params-toggle-btn open" id="treatSiteToggleBtn">
+      <span>📋 Datos del sitio (obligatorio)</span>
+      <span class="chevron open">▾</span>
+    </button>
+    <div class="params-panel open" id="treatSitePanel">
+      <p class="field-note" style="margin-top:14px;">Se usan tanto en "Censo por brote" como en "Registro de campo". Debes llenarlos la primera vez que trabajes cada tipo de censo en el día; si regresas al mismo tipo de censo más tarde ese mismo día, la app te pregunta si sigues en la misma área.</p>
+      <div class="field"><label for="tsPredio">Nombre del predio</label>
+        <input type="text" id="tsPredio" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="tsMunicipio">Municipio</label>
+        <input type="text" id="tsMunicipio" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="tsParaje">Paraje</label>
+        <input type="text" id="tsParaje" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="tsAsnm">ASNM (altitud, m)</label>
+        <input type="number" id="tsAsnm" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="tsVegetacion">Tipo de vegetación</label>
+        <input type="text" id="tsVegetacion" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="tsLevanto">Levantó (nombre)</label>
+        <input type="text" id="tsLevanto" class="metodo-select" style="padding:12px 14px;">
+      </div>
+      <button type="button" class="save-params-btn" id="saveTreatSiteBtn">Guardar datos del sitio</button>
+    </div>
+  </section>
+
+  <section class="card">
     <p class="card-title">Especie</p>
     <button type="button" class="species-select-btn" id="speciesSelectBtn">
       <span class="name" id="speciesSelectedName">Abies religiosa</span>
       <span class="chevron" id="speciesChevron">▾</span>
     </button>
     <div class="species-dropdown" id="speciesDropdown">
-      <div class="species-grid" id="speciesGrid">
-        <label class="species-tag active" data-key="abies">
-          <input type="radio" name="species" value="abies" checked>
-          <span class="name">Abies religiosa</span>
-          <span class="marker"></span>
-        </label>
-        <label class="species-tag" data-key="pmont">
-          <input type="radio" name="species" value="pmont">
-          <span class="name">Pinus montezumae</span>
-          <span class="marker"></span>
-        </label>
-        <label class="species-tag" data-key="pteo">
-          <input type="radio" name="species" value="pteo">
-          <span class="name">Pinus teocote</span>
-          <span class="marker"></span>
-        </label>
-        <label class="species-tag" data-key="alnus">
-          <input type="radio" name="species" value="alnus">
-          <span class="name">Alnus acuminata</span>
-          <span class="marker"></span>
-        </label>
-        <label class="species-tag" data-key="ppatula">
-          <input type="radio" name="species" value="ppatula">
-          <span class="name">Pinus patula</span>
-          <span class="marker"></span>
-        </label>
-        <label class="species-tag" data-key="payac">
-          <input type="radio" name="species" value="payac">
-          <span class="name">Pinus ayacahuite</span>
-          <span class="marker"></span>
-        </label>
+      <div class="species-grid" id="speciesGrid"></div>
+    </div>
+    <p class="params-subtitle" style="margin-top:16px;">Coordenadas UTM</p>
+    <div class="field"><label for="mainLat">Latitud</label>
+      <input type="number" id="mainLat" class="metodo-select" step="0.000001" style="padding:12px 14px;">
+    </div>
+    <div class="field" style="margin-bottom:0;"><label for="mainLon">Longitud</label>
+      <input type="number" id="mainLon" class="metodo-select" step="0.000001" style="padding:12px 14px;">
+    </div>
+  </section>
+
+  <section class="card">
+    <button type="button" class="params-toggle-btn" id="customSpeciesToggleBtn">
+      <span>🌎 Especies personalizadas (por región)</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="params-panel" id="customSpeciesPanel">
+      <p class="field-note params-warning">Estas especies las agregas tú, para censos en otras regiones. A diferencia de las 6 especies base, no cuentan con el verificador de integridad — están pensadas para que las edites y actualices libremente. Quedan guardadas en el celular aunque cierres la app por completo.</p>
+
+      <div id="customSpeciesListBody"></div>
+
+      <p class="params-subtitle" style="margin-top:20px;">Agregar nueva especie</p>
+      <div class="field">
+        <label for="csName">Nombre científico</label>
+        <input type="text" id="csName" class="metodo-select" placeholder="Ej. Quercus laurina" style="padding:12px 14px;">
       </div>
+      <p class="field-note">Ecuación: V = a·D^b·H^c + d·D² (mismo formato que las especies base)</p>
+      <div class="field"><label for="csA">Coeficiente a</label>
+        <input type="number" id="csA" class="metodo-select" step="0.000001" placeholder="0.000065" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="csB">Exponente b (de D)</label>
+        <input type="number" id="csB" class="metodo-select" step="0.000001" placeholder="1.9" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="csC">Exponente c (de H)</label>
+        <input type="number" id="csC" class="metodo-select" step="0.000001" placeholder="0.9" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="csD">Coeficiente d</label>
+        <input type="number" id="csD" class="metodo-select" step="0.000001" placeholder="0.00004" style="padding:12px 14px;">
+      </div>
+      <div class="field"><label for="csDensity">Densidad de madera, para biomasa (kg/m³, opcional)</label>
+        <input type="number" id="csDensity" class="metodo-select" step="1" placeholder="450" style="padding:12px 14px;">
+      </div>
+      <button type="button" class="save-params-btn" id="addCustomSpeciesBtn">+ Agregar especie</button>
     </div>
   </section>
 
@@ -743,8 +868,48 @@
   </section>
 
   <section class="card">
-    <p class="card-title">Datos de saneamiento (opcional · NOM-019)</p>
-    <div class="field">
+    <button type="button" class="params-toggle-btn open" id="censoToggleBtn">
+      <span>📋 Ficha del árbol censado (obligatorio)</span>
+      <span class="chevron open">▾</span>
+    </button>
+    <div class="params-panel open" id="censoPanel">
+      <div class="field" style="margin-top:14px;"><label for="censoNoArbol">No. de árbol (folio/marca) *</label>
+        <input type="text" id="censoNoArbol" class="metodo-select" style="padding:12px 14px;">
+        <p class="field-note">Al agregar un árbol, este número avanza solo para el siguiente. Se reinicia cada nuevo día.</p>
+      </div>
+
+      <div class="field">
+        <label>Agente causal *</label>
+        <button type="button" class="species-select-btn" id="agenteSelectBtn">
+          <span class="name" id="agenteSelectedName">Toca para elegir</span>
+          <span class="chevron" id="agenteChevron">▾</span>
+        </button>
+        <div class="species-dropdown" id="agenteDropdown">
+          <div class="species-grid" id="agenteGrid"></div>
+        </div>
+      </div>
+
+      <p class="params-subtitle">Síntomas observados</p>
+      <div class="check-list" id="censoSintomas">
+        <label class="check-row"><input type="checkbox" data-sintoma="grumos"><span class="check-box"></span><span>Presencia de grumos en tronco y ramas</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="muerte_descendente"><span class="check-box"></span><span>Muerte descendente</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="secos_grisaceos"><span class="check-box"></span><span>Secos, grisáceos, con corteza</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="verde_aserrin"><span class="check-box"></span><span>Verde con salida de aserrín</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="ramas_amarillas"><span class="check-box"></span><span>Ramas amarillas rojizas</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="verde_alimonado"><span class="check-box"></span><span>Verde alimonado amarillo</span></label>
+        <label class="check-row"><input type="checkbox" data-sintoma="totalmente_rojizo"><span class="check-box"></span><span>Totalmente rojizo</span></label>
+      </div>
+      <p class="field-note">Estos datos se adjuntan al árbol actual cuando lo agregues al registro. Los datos del predio y las coordenadas se toman de las tarjetas "Datos del sitio" y "Especie", arriba.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <button type="button" class="params-toggle-btn" id="saneamientoToggleBtn">
+      <span>🪓 Datos de saneamiento (opcional · NOM-019)</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="params-panel" id="saneamientoPanel">
+    <div class="field" style="margin-top:14px;">
       <label for="pendienteInput">Pendiente del terreno</label>
       <div class="stepper">
         <button type="button" data-target="pendienteInput" data-step="-5">−</button>
@@ -793,6 +958,7 @@
         <option value="11">11. Uso de antiagregantes</option>
       </select>
     </div>
+    </div>
   </section>
 
   <section class="card">
@@ -801,7 +967,7 @@
       <span class="chevron" id="paramsChevron">▾</span>
     </button>
     <div class="params-panel" id="paramsPanel">
-      <p class="field-note params-warning">Valores de referencia iniciales (bases internacionales tipo IPCC / densidad de madera genérica) — ajústalos si tienes datos propios de INIFAP, CONAFOR o laboratorio. No son mediciones específicas de tus rodales.</p>
+      <p class="field-note params-warning">Valores de referencia iniciales (bases internacionales tipo IPCC / densidad de madera genérica) — ajústalos si tienes datos propios de INIFAP, CONAFOR o laboratorio. No son mediciones específicas de tus rodales. Una vez que los guardes, quedan así aunque cierres la app por completo.</p>
 
       <p class="params-subtitle">Densidad básica por especie (kg/m³)</p>
       <div class="field"><label for="dens_abies">Abies religiosa</label>
@@ -863,7 +1029,7 @@
     <div id="logBody">
       <p class="log-empty">Aún no hay árboles registrados.</p>
     </div>
-    <button class="export-btn" id="exportBtn">⬇ Descargar Excel</button>
+    <button class="export-btn" id="exportBtn">⬇ Descargar Excel + CSV</button>
     <div class="log-actions">
       <button id="copyBtn">Copiar registro</button>
       <button id="clearBtn" class="danger">Vaciar</button>
@@ -872,11 +1038,11 @@
 
   <section class="card">
     <button type="button" class="params-toggle-btn" id="backupsToggleBtn">
-      <span>📦 Respaldos automáticos (<span id="backupsCounter">0/10</span>)</span>
+      <span>📦 Respaldos automáticos (<span id="backupsCounter">0/20</span>)</span>
       <span class="chevron">▾</span>
     </button>
     <div class="params-panel" id="backupsPanel">
-      <p class="field-note" style="margin-top:14px;">La app guarda un respaldo automático solo cuando se cierra por completo (para casos de emergencia), otro antes de cada "Vaciar", y puedes hacer uno manual cuando quieras — hasta un máximo de 10. Cambiar de app o apagar la pantalla NO genera un respaldo nuevo. Cada uno se puede restaurar por separado.</p>
+      <p class="field-note" style="margin-top:14px;">La app guarda un respaldo automático solo cuando se cierra por completo (para casos de emergencia), otro antes de cada "Vaciar", y puedes hacer uno manual cuando quieras — hasta un máximo de 20. Cambiar de app o apagar la pantalla NO genera un respaldo nuevo. Cada uno se puede restaurar por separado.</p>
       <p class="field-note backup-warning-banner" id="backupsWarning" style="display:none;">⚠ Llegaste al máximo de 10 respaldos. Te recomendamos descargar tu registro en Excel y vaciarlo (o vaciar los respaldos ya exportados) para que la app pueda seguir respaldando información nueva.</p>
       <div id="backupsListBody"></div>
       <button type="button" class="save-params-btn" id="backupNowBtn">💾 Respaldar ahora</button>
@@ -887,6 +1053,7 @@
   <footer>
     DAP en cm · altura en m · volumen total árbol (VTA) en m³, según las ecuaciones de volumen proporcionadas para cada especie. El registro se guarda solo en este celular.
     <p class="citation">Ecuaciones de volumen: Sistema Biométrico Forestal (SiBiFor), Vargas-Larreta et al., 2017.</p>
+    <p class="citation">⚠ Se recomienda conservar siempre un respaldo físico (en papel) de tus datos de campo, además de los respaldos digitales de esta app, ante cualquier eventualidad.</p>
     <p class="credit">Aplicación creada por el Ing. José Antonio Cortés Ojeda.</p>
   </footer>
 </div>
@@ -957,7 +1124,7 @@ function populateBiomassParamsUI(params){
   document.getElementById('paramCF').value = params.cf;
 }
 function calcBiomassCarbon(V, speciesKey, params){
-  const density = params[speciesKey] != null ? params[speciesKey] : 450;
+  const density = densityForKey(speciesKey, params);
   const biomass = V * density * params.bef;      // kg
   const carbon = biomass * params.cf;             // kg
   return { biomass, carbon };
@@ -1002,10 +1169,46 @@ const toast = document.getElementById('toast');
 let currentSpeciesKey = 'abies';
 let lastResult = null;
 
+// Especies personalizadas por región (editables, sin verificador de integridad)
+function loadCustomSpecies(){
+  try{
+    const raw = localStorage.getItem('cubicador_custom_species');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveCustomSpecies(list){
+  localStorage.setItem('cubicador_custom_species', JSON.stringify(list));
+}
+
+// Devuelve la lista combinada: especies base (protegidas) + personalizadas
+function getAllSpecies(){
+  const builtIn = Object.entries(SPECIES).map(([key, s]) => ({ key, name: s.name, custom: false }));
+  const custom = loadCustomSpecies().map(cs => ({ key: cs.key, name: cs.name, custom: true, coefs: cs }));
+  return [...builtIn, ...custom];
+}
+function getSpeciesByKey(key){
+  if(SPECIES[key]) return { key, name: SPECIES[key].name, custom: false };
+  const cs = loadCustomSpecies().find(c => c.key === key);
+  if(cs) return { key, name: cs.name, custom: true, coefs: cs };
+  return null;
+}
+function calcVolumeForKey(key, D, H){
+  if(SPECIES[key]) return SPECIES[key].calc(D, H);
+  const cs = loadCustomSpecies().find(c => c.key === key);
+  if(!cs) return 0;
+  return cs.a*Math.pow(D,cs.b)*Math.pow(H,cs.c) + cs.d*Math.pow(D,2);
+}
+function densityForKey(key, biomassParams){
+  if(biomassParams[key] != null) return biomassParams[key];
+  const cs = loadCustomSpecies().find(c => c.key === key);
+  return (cs && cs.density) ? cs.density : 450;
+}
+
 // Species selector (desplegable)
 const speciesSelectBtn = document.getElementById('speciesSelectBtn');
 const speciesSelectedName = document.getElementById('speciesSelectedName');
 const speciesDropdown = document.getElementById('speciesDropdown');
+const speciesGrid = document.getElementById('speciesGrid');
 
 function closeSpeciesDropdown(){
   speciesSelectBtn.classList.remove('open');
@@ -1023,14 +1226,40 @@ document.addEventListener('click', (e) => {
   }
 });
 
-document.querySelectorAll('.species-tag').forEach(tag => {
-  tag.addEventListener('click', () => {
-    document.querySelectorAll('.species-tag').forEach(t => t.classList.remove('active'));
-    tag.classList.add('active');
-    currentSpeciesKey = tag.dataset.key;
-    speciesSelectedName.textContent = tag.querySelector('.name').textContent;
-    closeSpeciesDropdown();
+function renderSpeciesGrid(){
+  const all = getAllSpecies();
+  // Si la especie seleccionada actualmente ya no existe (se borró una personalizada), regresa a la primera
+  if(!all.find(s => s.key === currentSpeciesKey)){
+    currentSpeciesKey = all[0].key;
+  }
+  speciesGrid.innerHTML = all.map(s => `
+    <label class="species-tag${s.key === currentSpeciesKey ? ' active' : ''}" data-key="${s.key}">
+      <input type="radio" name="species" value="${s.key}" ${s.key === currentSpeciesKey ? 'checked' : ''}>
+      <span class="name">${s.name}${s.custom ? ' <span style="opacity:.5;font-size:11px;">· personalizada</span>' : ''}</span>
+      <span class="marker"></span>
+    </label>`).join('');
+
+  const current = all.find(s => s.key === currentSpeciesKey);
+  speciesSelectedName.textContent = current ? current.name : '';
+
+  speciesGrid.querySelectorAll('.species-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      speciesGrid.querySelectorAll('.species-tag').forEach(t => t.classList.remove('active'));
+      tag.classList.add('active');
+      currentSpeciesKey = tag.dataset.key;
+      speciesSelectedName.textContent = tag.querySelector('.name').textContent.split(' ·')[0];
+      closeSpeciesDropdown();
+      if(typeof renderAgenteList === 'function') renderAgenteList();
+    });
   });
+}
+
+// Panel de datos de saneamiento (NOM-019)
+const saneamientoToggleBtn = document.getElementById('saneamientoToggleBtn');
+const saneamientoPanel = document.getElementById('saneamientoPanel');
+saneamientoToggleBtn.addEventListener('click', () => {
+  const isOpen = saneamientoPanel.classList.toggle('open');
+  saneamientoToggleBtn.classList.toggle('open', isOpen);
 });
 
 // Panel de parámetros de biomasa/carbono
@@ -1046,6 +1275,343 @@ document.getElementById('saveParamsBtn').addEventListener('click', () => {
   showToast('Parámetros guardados');
   calcVolume();
 });
+
+// Panel de especies personalizadas por región
+const customSpeciesToggleBtn = document.getElementById('customSpeciesToggleBtn');
+const customSpeciesPanel = document.getElementById('customSpeciesPanel');
+customSpeciesToggleBtn.addEventListener('click', () => {
+  const isOpen = customSpeciesPanel.classList.toggle('open');
+  customSpeciesToggleBtn.classList.toggle('open', isOpen);
+  if(isOpen) renderCustomSpeciesList();
+});
+
+function renderCustomSpeciesList(){
+  const list = loadCustomSpecies();
+  const body = document.getElementById('customSpeciesListBody');
+  if(list.length === 0){
+    body.innerHTML = '<p class="log-empty">Aún no has agregado especies personalizadas.</p>';
+    return;
+  }
+  body.innerHTML = list.map(cs => `
+    <div class="cs-row">
+      <div class="cs-info">
+        <span class="cs-name">${cs.name}</span>
+        <span class="cs-meta">a=${cs.a} b=${cs.b} c=${cs.c} d=${cs.d}${cs.density ? ' · ρ=' + cs.density + 'kg/m³' : ''}</span>
+      </div>
+      <button type="button" class="cs-delete-btn" data-key="${cs.key}">Borrar</button>
+    </div>`).join('');
+
+  body.querySelectorAll('.cs-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(!confirm('¿Borrar esta especie personalizada? Los árboles ya registrados con ella conservan su nombre y datos, pero ya no podrás volver a seleccionarla.')) return;
+      const updated = loadCustomSpecies().filter(c => c.key !== btn.dataset.key);
+      saveCustomSpecies(updated);
+      renderCustomSpeciesList();
+      renderSpeciesGrid();
+      showToast('Especie borrada');
+    });
+  });
+}
+
+document.getElementById('addCustomSpeciesBtn').addEventListener('click', () => {
+  const name = document.getElementById('csName').value.trim();
+  const a = parseFloat(document.getElementById('csA').value);
+  const b = parseFloat(document.getElementById('csB').value);
+  const c = parseFloat(document.getElementById('csC').value);
+  const d = parseFloat(document.getElementById('csD').value);
+  const density = parseFloat(document.getElementById('csDensity').value) || null;
+
+  if(!name){ showToast('Falta el nombre de la especie'); return; }
+  if([a,b,c,d].some(v => isNaN(v))){ showToast('Completa los 4 coeficientes de la fórmula'); return; }
+
+  const key = 'custom_' + name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') + '_' + Date.now().toString(36).slice(-4);
+
+  const list = loadCustomSpecies();
+  list.push({ key, name, a, b, c, d, density });
+  saveCustomSpecies(list);
+
+  document.getElementById('csName').value = '';
+  document.getElementById('csA').value = '';
+  document.getElementById('csB').value = '';
+  document.getElementById('csC').value = '';
+  document.getElementById('csD').value = '';
+  document.getElementById('csDensity').value = '';
+
+  renderCustomSpeciesList();
+  renderSpeciesGrid();
+  showToast('Especie agregada');
+});
+
+// Tipo de censo (define qué pestañas trae el Excel) + estado por modo (sitio y contador, por día)
+let censoMode = localStorage.getItem('cubicador_censo_mode') || 'danado';
+const censoModeToggle = document.getElementById('censoModeToggle');
+
+function modeLabel(mode){
+  return mode === 'tratado' ? 'arbolado tratado' : 'arbolado dañado';
+}
+function todayStr(){
+  return new Date().toLocaleDateString('es-MX');
+}
+function loadModeState(mode){
+  try{
+    const raw = localStorage.getItem('cubicador_mode_state_' + mode);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function saveModeState(mode, state){
+  localStorage.setItem('cubicador_mode_state_' + mode, JSON.stringify(state));
+}
+
+// Al entrar/regresar a un modo: si ya se trabajó hoy en ese modo, pregunta si es la misma área.
+// Si es un día distinto (o nunca se ha usado ese modo), deja todo en blanco para llenarlo de nuevo.
+function activateMode(mode){
+  const state = loadModeState(mode);
+  const today = todayStr();
+  if(state && state.date === today){
+    const continueSame = confirm(`¿Vas a continuar el censo de ${modeLabel(mode)} en la misma área/sitio donde lo dejaste hoy?`);
+    if(continueSame){
+      populateTreatSiteUI(state.site || {});
+      document.getElementById('censoNoArbol').value = state.counter || '';
+      return;
+    } else {
+      populateTreatSiteUI({});
+      document.getElementById('censoNoArbol').value = '';
+      saveModeState(mode, { site: {}, date: today, counter: '' });
+      return;
+    }
+  }
+  // Sin datos de hoy para este modo: arranca en blanco
+  populateTreatSiteUI({});
+  document.getElementById('censoNoArbol').value = '';
+  saveModeState(mode, { site: {}, date: today, counter: '' });
+}
+
+// Guarda el sitio y/o el contador actuales dentro del estado de hoy para el modo activo
+function commitModeState({ site, counter } = {}){
+  const state = loadModeState(censoMode) || { site: {}, date: todayStr(), counter: '' };
+  if(site !== undefined) state.site = site;
+  if(counter !== undefined) state.counter = counter;
+  state.date = todayStr();
+  saveModeState(censoMode, state);
+}
+
+censoModeToggle.querySelectorAll('.toggle-btn').forEach(btn => {
+  if(btn.dataset.value === censoMode) btn.classList.add('active'); else btn.classList.remove('active');
+  btn.addEventListener('click', () => {
+    if(btn.dataset.value === censoMode) return; // ya está activo, no repetir el aviso
+    censoModeToggle.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    censoMode = btn.dataset.value;
+    localStorage.setItem('cubicador_censo_mode', censoMode);
+    activateMode(censoMode);
+  });
+});
+
+// Panel de datos del sitio (predio, municipio, paraje, ASNM, tipo de vegetación, levantó)
+// Se usa tanto para "Censo por brote" como para "Registro de campo". Es obligatorio.
+const treatSiteToggleBtn = document.getElementById('treatSiteToggleBtn');
+const treatSitePanel = document.getElementById('treatSitePanel');
+treatSiteToggleBtn.addEventListener('click', () => {
+  const isOpen = treatSitePanel.classList.toggle('open');
+  treatSiteToggleBtn.classList.toggle('open', isOpen);
+});
+function populateTreatSiteUI(site){
+  document.getElementById('tsPredio').value = site.predio || '';
+  document.getElementById('tsMunicipio').value = site.municipio || '';
+  document.getElementById('tsParaje').value = site.paraje || '';
+  document.getElementById('tsAsnm').value = site.asnm || '';
+  document.getElementById('tsVegetacion').value = site.vegetacion || '';
+  document.getElementById('tsLevanto').value = site.levanto || '';
+}
+function getTreatSiteDataFromUI(){
+  const site = {
+    predio: document.getElementById('tsPredio').value.trim(),
+    municipio: document.getElementById('tsMunicipio').value.trim(),
+    paraje: document.getElementById('tsParaje').value.trim(),
+    asnm: document.getElementById('tsAsnm').value.trim(),
+    vegetacion: document.getElementById('tsVegetacion').value.trim(),
+    levanto: document.getElementById('tsLevanto').value.trim()
+  };
+  commitModeState({ site });
+  return site;
+}
+function isSiteDataComplete(){
+  return ['tsPredio','tsMunicipio','tsParaje','tsAsnm','tsVegetacion','tsLevanto']
+    .every(id => document.getElementById(id).value.trim().length > 0);
+}
+document.getElementById('saveTreatSiteBtn').addEventListener('click', () => {
+  getTreatSiteDataFromUI();
+  treatSitePanel.classList.remove('open');
+  treatSiteToggleBtn.classList.remove('open');
+  showToast('Datos del sitio guardados');
+});
+
+// Activa el estado del modo con el que arranca la app (respeta la lógica de "mismo día")
+activateMode(censoMode);
+
+// Coordenadas UTM principales (debajo de Especie, van tanto a Registro de campo como a Censo por brote)
+function getMainCoordsFromUI(){
+  const latEl = document.getElementById('mainLat');
+  const lonEl = document.getElementById('mainLon');
+  return {
+    lat: latEl.value ? parseFloat(latEl.value) : null,
+    lon: lonEl.value ? parseFloat(lonEl.value) : null
+  };
+}
+function resetMainCoords(){
+  document.getElementById('mainLat').value = '';
+  document.getElementById('mainLon').value = '';
+}
+
+// Panel de ficha del árbol censado (obligatorio: no. de árbol, agente causal, síntomas)
+const censoToggleBtn = document.getElementById('censoToggleBtn');
+const censoPanel = document.getElementById('censoPanel');
+censoToggleBtn.addEventListener('click', () => {
+  const isOpen = censoPanel.classList.toggle('open');
+  censoToggleBtn.classList.toggle('open', isOpen);
+});
+
+// Descortezadores documentados para Pinus y Abies (ver nota al usuario sobre fuentes)
+const BEETLE_LISTS = {
+  pinus: {
+    primarios: ['Dendroctonus mexicanus','Dendroctonus adjunctus','Dendroctonus approximatus','Dendroctonus frontalis','Dendroctonus brevicomis'],
+    secundarios: ['Dendroctonus valens','Ips calligraphus','Ips lecontei','Ips pini','Pseudips mexicanus','Pityophthorus spp.']
+  },
+  abies: {
+    primarios: ['Pseudohylesinus variegatus','Pseudohylesinus magnus'],
+    secundarios: ['Pityophthorus elatinus','Scolytus mundus','Pityophthorus blackmani','Gnathotrichus sulcatus']
+  }
+};
+function genusForSpeciesKey(key){
+  const sp = getSpeciesByKey(key);
+  if(!sp) return null;
+  const name = sp.name.toLowerCase();
+  if(name.startsWith('pinus')) return 'pinus';
+  if(name.startsWith('abies')) return 'abies';
+  return null;
+}
+
+let currentAgenteSet = new Set();
+let currentAgenteOtro = '';
+const agenteSelectBtn = document.getElementById('agenteSelectBtn');
+const agenteSelectedName = document.getElementById('agenteSelectedName');
+const agenteDropdown = document.getElementById('agenteDropdown');
+const agenteGrid = document.getElementById('agenteGrid');
+
+function closeAgenteDropdown(){
+  agenteSelectBtn.classList.remove('open');
+  agenteDropdown.classList.remove('open');
+}
+agenteSelectBtn.addEventListener('click', () => {
+  const isOpen = agenteDropdown.classList.toggle('open');
+  agenteSelectBtn.classList.toggle('open', isOpen);
+  if(isOpen) agenteDropdown.scrollTop = 0;
+});
+document.addEventListener('click', (e) => {
+  if(!agenteSelectBtn.contains(e.target) && !agenteDropdown.contains(e.target)){
+    closeAgenteDropdown();
+  }
+});
+
+function getAgenteList(){
+  const list = [...currentAgenteSet];
+  if(currentAgenteOtro) list.push(currentAgenteOtro);
+  return list;
+}
+function updateAgenteSelectedLabel(){
+  const list = getAgenteList();
+  if(list.length === 0) agenteSelectedName.textContent = 'Toca para elegir';
+  else if(list.length <= 2) agenteSelectedName.textContent = list.join(', ');
+  else agenteSelectedName.textContent = `${list.length} seleccionados`;
+}
+
+function renderAgenteList(){
+  const genus = genusForSpeciesKey(currentSpeciesKey);
+  const list = genus ? BEETLE_LISTS[genus] : null;
+  let html = '';
+  if(list){
+    html += `<p class="params-subtitle" style="margin:8px 0 6px;padding:0 8px;">Primarios</p>`;
+    html += list.primarios.map(n => `<label class="species-tag${currentAgenteSet.has(n) ? ' active' : ''}" data-name="${n}"><span class="name" style="font-style:italic;">${n}</span><span class="marker"></span></label>`).join('');
+    html += `<p class="params-subtitle" style="margin:12px 0 6px;padding:0 8px;">Secundarios</p>`;
+    html += list.secundarios.map(n => `<label class="species-tag${currentAgenteSet.has(n) ? ' active' : ''}" data-name="${n}"><span class="name" style="font-style:italic;">${n}</span><span class="marker"></span></label>`).join('');
+  } else {
+    html += `<p class="field-note" style="padding:10px 12px;">No hay lista específica para esta especie hospedera — usa "Otro" para escribirlo manualmente.</p>`;
+  }
+  html += `<label class="species-tag${currentAgenteOtro ? ' active' : ''}" data-name="__otro__"><span class="name">Otro (especificar)</span><span class="marker"></span></label>`;
+  html += `<div class="field" id="agenteOtroWrap" style="display:${currentAgenteOtro ? 'block' : 'none'};padding:8px;"><input type="text" id="agenteOtroInput" class="metodo-select" placeholder="Escribe el agente causal" value="${currentAgenteOtro}" style="padding:12px 14px;"></div>`;
+  html += `<p class="field-note" style="padding:6px 12px 2px;">Puedes seleccionar más de una opción.</p>`;
+  agenteGrid.innerHTML = html;
+
+  agenteGrid.querySelectorAll('.species-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      if(tag.dataset.name === '__otro__'){
+        const willShow = document.getElementById('agenteOtroWrap').style.display === 'none';
+        document.getElementById('agenteOtroWrap').style.display = willShow ? 'block' : 'none';
+        tag.classList.toggle('active', willShow);
+        if(!willShow){ currentAgenteOtro = ''; updateAgenteSelectedLabel(); }
+        if(willShow){
+          document.getElementById('agenteOtroInput').focus();
+          document.getElementById('agenteOtroInput').addEventListener('input', (e) => {
+            currentAgenteOtro = e.target.value.trim();
+            updateAgenteSelectedLabel();
+          });
+        }
+      } else {
+        const name = tag.dataset.name;
+        if(currentAgenteSet.has(name)){ currentAgenteSet.delete(name); tag.classList.remove('active'); }
+        else { currentAgenteSet.add(name); tag.classList.add('active'); }
+        updateAgenteSelectedLabel();
+      }
+    });
+  });
+  // Si la especie cambió y las opciones seleccionadas ya no aplican a esta lista, se limpian
+  if(list){
+    const valid = new Set([...list.primarios, ...list.secundarios]);
+    [...currentAgenteSet].forEach(n => { if(!valid.has(n)) currentAgenteSet.delete(n); });
+  }
+  updateAgenteSelectedLabel();
+  agenteDropdown.scrollTop = 0;
+}
+renderAgenteList();
+
+// Incrementa el consecutivo del No. de árbol (preserva prefijos/ceros a la izquierda)
+function incrementArbolNumber(str){
+  const m = str.match(/^(.*?)(\d+)(\D*)$/);
+  if(!m) return str; // sin dígitos: no se puede incrementar automáticamente
+  const next = (parseInt(m[2],10)+1).toString().padStart(m[2].length, '0');
+  return m[1] + next + m[3];
+}
+
+function getCensoTreeData(){
+  const sintomas = {};
+  document.querySelectorAll('#censoSintomas input[type="checkbox"]').forEach(chk => {
+    sintomas[chk.dataset.sintoma] = chk.checked;
+  });
+  return {
+    noArbol: document.getElementById('censoNoArbol').value.trim(),
+    agenteCausal: getAgenteList().join(', '),
+    sintomas
+  };
+}
+function isCensoTreeDataComplete(){
+  const noArbol = document.getElementById('censoNoArbol').value.trim();
+  return noArbol.length > 0 && getAgenteList().length > 0;
+}
+function resetCensoTreeFields(){
+  const entered = document.getElementById('censoNoArbol').value.trim();
+  if(entered){
+    const next = incrementArbolNumber(entered);
+    document.getElementById('censoNoArbol').value = next;
+    commitModeState({ site: getTreatSiteDataFromUI(), counter: next });
+  }
+  currentAgenteSet.clear();
+  currentAgenteOtro = '';
+  updateAgenteSelectedLabel();
+  const otroWrap = document.getElementById('agenteOtroWrap');
+  if(otroWrap) otroWrap.style.display = 'none';
+  agenteGrid.querySelectorAll('.species-tag').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#censoSintomas input[type="checkbox"]').forEach(chk => chk.checked = false);
+}
 
 // Steppers
 document.querySelectorAll('.stepper button').forEach(btn => {
@@ -1089,8 +1655,8 @@ function calcVolume(){
   }
   errorMsg.classList.remove('show');
 
-  const species = SPECIES[currentSpeciesKey];
-  const V = species.calc(D, H);
+  const species = getSpeciesByKey(currentSpeciesKey);
+  const V = calcVolumeForKey(currentSpeciesKey, D, H);
   const AB = calcBasalArea(D);
   const params = loadBiomassParams();
   const { biomass, carbon } = calcBiomassCarbon(V, currentSpeciesKey, params);
@@ -1157,6 +1723,7 @@ function renderLog(){
       <td class="num">${entry.H}</td>
       <td class="num">${entry.V.toFixed(4)}</td>
       <td class="num">${AB.toFixed(4)}</td>
+      <td class="del-cell"><button type="button" class="row-delete-btn" data-idx="${num - 1}" title="Eliminar este árbol"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td>
     </tr>`;
   });
 
@@ -1169,18 +1736,51 @@ function renderLog(){
   }</div>`;
 
   logBody.innerHTML = `<div class="log-scroll"><table class="log-table">
-    <thead><tr><th>#</th><th>Fecha</th><th>Especie</th><th>D (cm)</th><th>H (m)</th><th>V (m³)</th><th>AB (m²)</th></tr></thead>
+    <thead><tr><th>#</th><th>Fecha</th><th>Especie</th><th>D (cm)</th><th>H (m)</th><th>V (m³)</th><th>AB (m²)</th><th></th></tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`;
   logTotal.textContent = total.toFixed(4);
   logTotalBasal.textContent = totalBasal.toFixed(4);
+
+  logBody.querySelectorAll('.row-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const current = loadLog();
+      const entry = current[idx];
+      if(!entry) return;
+      const ok = confirm(`¿Seguro que quieres eliminar este registro?\n\n${entry.species} · D=${entry.D} cm · H=${entry.H} m\n\nEsta acción no se puede deshacer.`);
+      if(!ok) return;
+      current.splice(idx, 1);
+      saveLog(current);
+      renderLog();
+      showToast('Registro eliminado');
+    });
+  });
 }
 
 addBtn.addEventListener('click', () => {
   if(!lastResult || addBtn.classList.contains('added')) return;
+
+  if(!isSiteDataComplete()){
+    treatSitePanel.classList.add('open');
+    treatSiteToggleBtn.classList.add('open');
+    treatSitePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    alert('No se ha capturado la información de "Datos del sitio".\n\nCaptura predio, municipio, paraje, ASNM, tipo de vegetación y quién levantó, antes de agregar este árbol al registro.');
+    return;
+  }
+
+  if(!isCensoTreeDataComplete()){
+    censoPanel.classList.add('open');
+    censoToggleBtn.classList.add('open');
+    censoPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    alert('No se ha capturado la información de la Ficha del árbol censado.\n\nCaptura el No. de árbol y el Agente causal antes de agregar este árbol al registro.');
+    return;
+  }
+
   const log = loadLog();
   const now = new Date();
   const metodoSelect = document.getElementById('metodoSelect');
+  const mainCoords = getMainCoordsFromUI();
   log.push({
     ...lastResult,
     date: now.toLocaleDateString('es-MX'),
@@ -1189,15 +1789,22 @@ addBtn.addEventListener('click', () => {
     trozas: parseInt(document.getElementById('trozasInput').value) || 0,
     descortezado: getToggleValue('descortezadoToggle'),
     tocon30: getToggleValue('tabconToggle'),
-    metodo: metodoSelect.options[metodoSelect.selectedIndex].text
+    metodo: metodoSelect.options[metodoSelect.selectedIndex].text,
+    censo: getCensoTreeData(),
+    treatSite: getTreatSiteDataFromUI(),
+    mainLat: mainCoords.lat,
+    mainLon: mainCoords.lon
   });
   saveLog(log);
   renderLog();
+  resetCensoTreeFields();
+  resetMainCoords();
   addBtn.classList.add('added');
   addBtn.textContent = '✓ Agregado';
+  document.getElementById('speciesSelectBtn').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-const MAX_BACKUPS = 10;
+const MAX_BACKUPS = 20; // cada respaldo, a su vez, no tiene límite de árboles que puede contener
 
 function loadBackups(){
   try{
@@ -1281,11 +1888,20 @@ document.getElementById('clearBackupsBtn').addEventListener('click', () => {
 });
 
 // Respaldo automático SOLO cuando la app se cierra de verdad (no al cambiar de app o apagar pantalla)
+function clearEphemeralDataOnClose(){
+  // Se conservan: 'cubicador_log' (Registro de campo), 'cubicador_backups' (Respaldos),
+  // 'cubicador_biomasa_params', 'cubicador_custom_species' (configuración), y el estado
+  // por modo ('cubicador_mode_state_danado' / '_tratado', que incluyen sitio y contador),
+  // ya que su reinicio ahora lo controla la fecha (ver activateMode), no el cierre de la app.
+  localStorage.removeItem('cubicador_site_data'); // clave antigua en desuso, por si quedó de versiones previas
+}
 window.addEventListener('pagehide', () => {
   pushBackup(loadLog(), 'auto');
+  clearEphemeralDataOnClose();
 });
 window.addEventListener('beforeunload', () => {
   pushBackup(loadLog(), 'auto');
+  clearEphemeralDataOnClose();
 });
 
 document.getElementById('clearBtn').addEventListener('click', () => {
@@ -1334,8 +1950,8 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 
   const biomassParams = loadBiomassParams();
   function speciesKeyByName(name){
-    const found = Object.entries(SPECIES).find(([k, s]) => s.name === name);
-    return found ? found[0] : null;
+    const found = getAllSpecies().find(s => s.name === name);
+    return found ? found.key : null;
   }
 
   let total = 0;
@@ -1345,6 +1961,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   let totalCarbon = 0;
   let rowsXml = '';
   let verifRowsXml = '';
+  let censoRowsXml = '';
   const bySpeciesExport = {};
   log.forEach((entry, i) => {
     total += entry.V;
@@ -1360,11 +1977,18 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     totalBiomass += biomass;
     totalCarbon += carbon;
     const fechaHora = entry.date ? (entry.date + (entry.time ? ' ' + entry.time : '')) : '';
+    const ts = entry.treatSite || {};
     rowsXml += `
       <Row>
         <Cell><Data ss:Type="Number">${i+1}</Data></Cell>
         <Cell><Data ss:Type="String">${escapeXml(fechaHora)}</Data></Cell>
         <Cell><Data ss:Type="String">${escapeXml(entry.species)}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.mainLat != null ? entry.mainLat : ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.mainLon != null ? entry.mainLon : ''}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts.predio || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts.municipio || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts.paraje || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts.asnm || '')}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.D}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.H}</Data></Cell>
         <Cell><Data ss:Type="Number">${entry.V.toFixed(6)}</Data></Cell>
@@ -1389,6 +2013,38 @@ document.getElementById('exportBtn').addEventListener('click', () => {
         <Cell><Data ss:Type="String">${entry.descortezado === 'si' ? 'Cumple' : (entry.descortezado === 'no' ? 'No aplica' : '')}</Data></Cell>
       </Row>`;
     }
+
+    const c = entry.censo;
+    if(c){
+      const s = c.sintomas || {};
+      const mark = v => v ? 'X' : '';
+      const ts2 = entry.treatSite || {};
+      censoRowsXml += `
+      <Row>
+        <Cell><Data ss:Type="String">${escapeXml(c.noArbol || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(entry.species)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.predio || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.municipio || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.paraje || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.asnm || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.vegetacion || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(ts2.levanto || '')}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.mainLat != null ? entry.mainLat : ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.mainLon != null ? entry.mainLon : ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.D}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.H}</Data></Cell>
+        <Cell><Data ss:Type="Number">${entry.V.toFixed(6)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(c.agenteCausal || '')}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.grumos)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.muerte_descendente)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.secos_grisaceos)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.verde_aserrin)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.ramas_amarillas)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.verde_alimonado)}</Data></Cell>
+        <Cell><Data ss:Type="String">${mark(s.totalmente_rojizo)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(entry.date || '')}</Data></Cell>
+      </Row>`;
+    }
   });
 
   let subtotalRowsXml = '';
@@ -1404,7 +2060,7 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 
   const dateStr = new Date().toLocaleDateString('es-MX');
 
-  const xml = `<?xml version="1.0"?>
+  const xmlHeader = `<?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
  xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -1418,12 +2074,18 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   <Style ss:ID="TotalLabel"><Font ss:Bold="1"/></Style>
   <Style ss:ID="TotalValue"><Font ss:Bold="1"/><NumberFormat ss:Format="0.0000"/></Style>
   <Style ss:ID="NumFmt"><NumberFormat ss:Format="0.0000"/></Style>
- </Styles>
- <Worksheet ss:Name="Registro de campo">
-  <Table>
+ </Styles>`;
+
+  const sheetRegistro = ` <Worksheet ss:Name="Registro de campo">  <Table>
    <Column ss:Width="30"/>
    <Column ss:Width="110"/>
    <Column ss:Width="130"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="60"/>
    <Column ss:Width="70"/>
    <Column ss:Width="70"/>
    <Column ss:Width="90"/>
@@ -1436,6 +2098,12 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell ss:StyleID="Header"><Data ss:Type="String">#</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Especie</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Latitud UTM</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Longitud UTM</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Predio</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Municipio</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Paraje</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">ASNM</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Diametro (cm)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Altura (m)</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen (m3)</Data></Cell>
@@ -1450,7 +2118,13 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell></Cell>
     <Cell></Cell>
     <Cell></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
     <Cell ss:StyleID="TotalLabel"><Data ss:Type="String">Total</Data></Cell>
+    <Cell></Cell>
+    <Cell></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${total.toFixed(6)}</Data></Cell>
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBasal.toFixed(6)}</Data></Cell>
     <Cell></Cell>
@@ -1466,8 +2140,9 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell><Data ss:Type="String">Parametros usados: BEF=${biomassParams.bef}, Fraccion de carbono=${biomassParams.cf} (valores de referencia, ajustables en la app)</Data></Cell>
    </Row>
   </Table>
- </Worksheet>
- <Worksheet ss:Name="Subtotales por especie">
+ </Worksheet>`;
+
+  const sheetSubtotales = ` <Worksheet ss:Name="Subtotales por especie">
   <Table>
    <Column ss:Width="150"/>
    <Column ss:Width="70"/>
@@ -1487,8 +2162,9 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell ss:StyleID="TotalValue"><Data ss:Type="Number">${totalBasal.toFixed(6)}</Data></Cell>
    </Row>
   </Table>
- </Worksheet>
- <Worksheet ss:Name="Verificacion NOM-019 Anexo4">
+ </Worksheet>`;
+
+  const sheetVerificacion = ` <Worksheet ss:Name="Verificacion NOM-019 Anexo4">
   <Table>
    <Column ss:Width="30"/>
    <Column ss:Width="120"/>
@@ -1507,8 +2183,64 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     <Cell><Data ss:Type="String">Referencia: NOM-019-SEMARNAT-2017, numeral 5.8 y Anexo 4 (lista de control de combate y control de descortezadores)</Data></Cell>
    </Row>
   </Table>
- </Worksheet>
-</Workbook>`;
+ </Worksheet>`;
+
+  const sheetCenso = ` <Worksheet ss:Name="Censo de arbolado danado">
+  <Table>
+   <Column ss:Width="70"/>
+   <Column ss:Width="130"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="90"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="60"/>
+   <Column ss:Width="90"/>
+   <Row>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">No. de arbol</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Especie hospedera</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Predio</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Municipio</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Paraje</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">ASNM</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tipo de vegetacion</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Levanto</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Latitud UTM</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Longitud UTM</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">DN (cm)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Altura (m)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Volumen (m3)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Agente causal</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Grumos tronco/ramas</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Muerte descendente</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Secos griseceos c/corteza</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Verde c/salida aserrin</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Ramas amarillas rojizas</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Verde alimonado amarillo</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Totalmente rojizo</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Fecha de levantamiento</Data></Cell>
+   </Row>${censoRowsXml}
+  </Table>
+ </Worksheet>`;
+
+  const sheets = censoMode === 'tratado'
+    ? sheetRegistro + sheetSubtotales + sheetVerificacion
+    : sheetCenso + sheetSubtotales;
+
+  const xml = xmlHeader + '\n' + sheets + '\n</Workbook>';
 
   const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -1520,7 +2252,50 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Excel descargado');
+
+  // Segunda descarga: CSV delimitado por comas, con la tabla principal según el modo activo
+  function csvEsc(v){
+    if(v == null) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }
+  let csvRows = [];
+  if(censoMode === 'tratado'){
+    csvRows.push(['#','Fecha','Especie','Latitud UTM','Longitud UTM','Predio','Municipio','Paraje','ASNM','Diametro (cm)','Altura (m)','Volumen (m3)','Area basal (m2)','Pendiente (%)','Trozas (pz)','Biomasa (kg)','Carbono (kg)']);
+    log.forEach((entry, i) => {
+      const AB = entry.AB != null ? entry.AB : calcBasalArea(entry.D);
+      let biomass = entry.biomass, carbon = entry.carbon;
+      if(biomass == null || carbon == null){
+        const bc = calcBiomassCarbon(entry.V, speciesKeyByName(entry.species), biomassParams);
+        biomass = bc.biomass; carbon = bc.carbon;
+      }
+      const ts = entry.treatSite || {};
+      const fechaHora = entry.date ? (entry.date + (entry.time ? ' ' + entry.time : '')) : '';
+      csvRows.push([i+1, fechaHora, entry.species, entry.mainLat ?? '', entry.mainLon ?? '', ts.predio||'', ts.municipio||'', ts.paraje||'', ts.asnm||'', entry.D, entry.H, entry.V.toFixed(6), AB.toFixed(6), entry.pendiente ?? '', entry.trozas ?? '', biomass.toFixed(3), carbon.toFixed(3)]);
+    });
+  } else {
+    csvRows.push(['No. de arbol','Especie hospedera','Predio','Municipio','Paraje','ASNM','Tipo de vegetacion','Levanto','Latitud UTM','Longitud UTM','DN (cm)','Altura (m)','Volumen (m3)','Agente causal','Grumos tronco/ramas','Muerte descendente','Secos griseceos c/corteza','Verde c/salida aserrin','Ramas amarillas rojizas','Verde alimonado amarillo','Totalmente rojizo','Fecha de levantamiento']);
+    log.forEach(entry => {
+      const c = entry.censo;
+      if(!c) return;
+      const s = c.sintomas || {};
+      const mark = v => v ? 'X' : '';
+      const ts2 = entry.treatSite || {};
+      csvRows.push([c.noArbol||'', entry.species, ts2.predio||'', ts2.municipio||'', ts2.paraje||'', ts2.asnm||'', ts2.vegetacion||'', ts2.levanto||'', entry.mainLat ?? '', entry.mainLon ?? '', entry.D, entry.H, entry.V.toFixed(6), c.agenteCausal||'', mark(s.grumos), mark(s.muerte_descendente), mark(s.secos_grisaceos), mark(s.verde_aserrin), mark(s.ramas_amarillas), mark(s.verde_alimonado), mark(s.totalmente_rojizo), entry.date||'']);
+    });
+  }
+  const csvContent = csvRows.map(row => row.map(csvEsc).join(',')).join('\r\n');
+  const csvBlob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const csvUrl = URL.createObjectURL(csvBlob);
+  const a2 = document.createElement('a');
+  a2.href = csvUrl;
+  a2.download = `registro_cubicacion_${fileDate}.csv`;
+  document.body.appendChild(a2);
+  a2.click();
+  document.body.removeChild(a2);
+  URL.revokeObjectURL(csvUrl);
+
+  showToast('Excel y CSV descargados');
 });
 
 document.getElementById('copyBtn').addEventListener('click', () => {
@@ -1528,8 +2303,8 @@ document.getElementById('copyBtn').addEventListener('click', () => {
   if(log.length === 0){ showToast('El registro está vacío'); return; }
   const biomassParams = loadBiomassParams();
   function speciesKeyByName(name){
-    const found = Object.entries(SPECIES).find(([k, s]) => s.name === name);
-    return found ? found[0] : null;
+    const found = getAllSpecies().find(s => s.name === name);
+    return found ? found.key : null;
   }
   let text = 'Fecha\tEspecie\tD (cm)\tH (m)\tV (m³)\tAB (m²)\tPendiente (%)\tTrozas\tBiomasa (kg)\tCarbono (kg)\n';
   let total = 0;
@@ -1585,6 +2360,7 @@ function fallbackCopy(text){
   document.body.removeChild(ta);
 }
 
+renderSpeciesGrid();
 renderLog();
 calcVolume();
 
